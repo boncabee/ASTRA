@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "event_id": "2bb63990-b5ab-4811-a333-ef8c55d3a571",
+  "timestamp": "2026-06-12T13:45:00Z",
+  "source_type": "application",
+  "event_type": "application.data.exported",
+  "severity": "high",
+  "actor": {
+    "username": "finance_lead",
+    "ip": "10.0.10.50"
+  },
+  "target": {
+    "hostname": "crm.corp.global",
+    "name": "Q3_Earnings_Report.csv"
+  },
+  "artifacts": [
+    {
+      "type": "file",
+      "value": "Q3_Earnings_Report.csv"
+    }
+  ],
+  "raw_event": "USER=finance_lead ACTION=Export RESOURCE=Q3_Earnings_Report.csv IP=10.0.10.50",
+  "metadata": {
+    "records_exported": 5000
+  }
+}

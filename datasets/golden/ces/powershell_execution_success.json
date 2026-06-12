@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "event_id": "016a6de9-9c04-45c9-8a14-3fe7c0801cf3",
+  "timestamp": "2026-06-12T11:22:33Z",
+  "source_type": "powershell",
+  "event_type": "process.execution.success",
+  "severity": "high",
+  "actor": {
+    "username": "sadmin",
+    "process": "powershell.exe"
+  },
+  "target": {
+    "command_line": "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"Get-Process\""
+  },
+  "artifacts": [],
+  "raw_event": "EventID: 4104, ScriptBlockText: Get-Process...",
+  "metadata": {
+    "event_id": "4104",
+    "script_block_id": "abc-123"
+  }
+}

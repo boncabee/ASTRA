@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "event_id": "7219f2f4-c97a-43f6-a18b-d75fa869eaae",
+  "timestamp": "2026-06-12T11:25:40Z",
+  "source_type": "powershell",
+  "event_type": "process.execution.failure",
+  "severity": "medium",
+  "actor": {
+    "username": "sadmin",
+    "process": "powershell.exe"
+  },
+  "target": {
+    "command_line": "powershell.exe -Command \"Stop-Service WinDefend\""
+  },
+  "artifacts": [],
+  "raw_event": "EventID: 4104, ScriptBlockText: Stop-Service WinDefend, Error: Access Denied",
+  "metadata": {
+    "event_id": "4104",
+    "error_code": "AccessDenied"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "event_id": "44c18976-db60-4092-a94f-1a396c1980a7",
+  "timestamp": "2026-06-12T08:15:30Z",
+  "source_type": "vpn",
+  "event_type": "authentication.login.success",
+  "severity": "info",
+  "actor": {
+    "username": "jroberts",
+    "ip": "198.51.100.42"
+  },
+  "target": {
+    "hostname": "vpn.corp.global"
+  },
+  "artifacts": [
+    {
+      "type": "ip",
+      "value": "198.51.100.42"
+    }
+  ],
+  "raw_event": "2026-06-12 08:15:30 ASA-6-113004: AAA user authentication Successful : server =  10.1.2.3 : user = jroberts",
+  "metadata": {
+    "vpn_group": "Engineering",
+    "auth_method": "RADIUS"
+  }
+}

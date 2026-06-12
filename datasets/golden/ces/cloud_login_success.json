@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "event_id": "d3b3e0d1-75ea-4bf7-9fe7-260658ccf640",
+  "timestamp": "2026-06-12T12:05:15Z",
+  "source_type": "cloudtrail",
+  "event_type": "authentication.login.success",
+  "severity": "info",
+  "actor": {
+    "username": "cloud_arch",
+    "ip": "203.0.113.10"
+  },
+  "target": {
+    "hostname": "console.aws.amazon.com"
+  },
+  "artifacts": [
+    {
+      "type": "ip",
+      "value": "203.0.113.10"
+    }
+  ],
+  "raw_event": "{\"eventName\": \"ConsoleLogin\", \"userIdentity\": {\"userName\": \"cloud_arch\"}, \"sourceIPAddress\": \"203.0.113.10\"}",
+  "metadata": {
+    "mfa_used": true
+  }
+}

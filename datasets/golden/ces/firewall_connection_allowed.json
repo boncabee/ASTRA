@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "event_id": "697e79ea-4f6a-433d-8e5b-392ce45aaf82",
+  "timestamp": "2026-06-12T10:14:05Z",
+  "source_type": "firewall",
+  "event_type": "network.connection.allowed",
+  "severity": "info",
+  "actor": {
+    "ip": "10.0.5.15",
+    "port": 50124
+  },
+  "target": {
+    "ip": "203.0.113.88",
+    "port": 443
+  },
+  "artifacts": [
+    {
+      "type": "ip",
+      "value": "203.0.113.88"
+    }
+  ],
+  "raw_event": "10.0.5.15,203.0.113.88,50124,443,tcp,allow,Outbound_HTTPS",
+  "metadata": {
+    "rule_name": "Outbound_HTTPS",
+    "bytes_sent": 4096,
+    "bytes_received": 8192
+  }
+}

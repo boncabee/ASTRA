@@ -1,0 +1,66 @@
+[
+  {
+    "dataset_name": "vpn_login_success.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  },
+  {
+    "dataset_name": "vpn_login_failure.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  },
+  {
+    "dataset_name": "windows_logon_success.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  },
+  {
+    "dataset_name": "windows_logon_failure.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  },
+  {
+    "dataset_name": "firewall_connection_allowed.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  },
+  {
+    "dataset_name": "firewall_connection_blocked.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  },
+  {
+    "dataset_name": "powershell_execution_success.json",
+    "validation_status": "FAIL",
+    "warnings": [],
+    "errors": [
+      "1 validation error for CESEvent\ntarget\n  Value error, Entity must contain at least one identifying field (id, name, username, hostname, ip) [type=value_error, input_value={'command_line': 'powersh...-Command \"Get-Process\"'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+    ]
+  },
+  {
+    "dataset_name": "powershell_execution_failure.json",
+    "validation_status": "FAIL",
+    "warnings": [],
+    "errors": [
+      "1 validation error for CESEvent\ntarget\n  Value error, Entity must contain at least one identifying field (id, name, username, hostname, ip) [type=value_error, input_value={'command_line': 'powersh...top-Service WinDefend\"'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+    ]
+  },
+  {
+    "dataset_name": "cloud_login_success.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  },
+  {
+    "dataset_name": "application_audit_event.json",
+    "validation_status": "PASS",
+    "warnings": [],
+    "errors": []
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "event_id": "bfd1c8b5-f965-4239-af17-d7a2d1bbe3d7",
+  "timestamp": "2026-06-12T09:02:45Z",
+  "source_type": "windows",
+  "event_type": "authentication.login.failure",
+  "severity": "medium",
+  "actor": {
+    "username": "admin_service",
+    "domain": "CORP_AD"
+  },
+  "target": {
+    "hostname": "SRV-DB-01"
+  },
+  "artifacts": [],
+  "raw_event": "EventID: 4625, TargetUserName: admin_service, Status: 0xC000006D",
+  "metadata": {
+    "event_id": "4625",
+    "logon_type": "3",
+    "failure_reason": "0xC000006D"
+  }
+}

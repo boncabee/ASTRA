@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "event_id": "5bf45483-1a2c-45fa-a130-1390b183d439",
+  "timestamp": "2026-06-12T09:01:22Z",
+  "source_type": "windows",
+  "event_type": "authentication.login.success",
+  "severity": "info",
+  "actor": {
+    "username": "msmith",
+    "domain": "CORP_AD"
+  },
+  "target": {
+    "hostname": "WS-INT-04"
+  },
+  "artifacts": [],
+  "raw_event": "EventID: 4624, LogonType: 3, TargetUserName: msmith, TargetDomainName: CORP_AD...",
+  "metadata": {
+    "event_id": "4624",
+    "logon_type": "3",
+    "process_name": "advapi"
+  }
+}

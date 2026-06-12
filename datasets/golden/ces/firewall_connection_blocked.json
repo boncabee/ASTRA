@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "event_id": "cdcda71c-38c8-469c-9b0d-d2547b962e8c",
+  "timestamp": "2026-06-12T10:15:10Z",
+  "source_type": "firewall",
+  "event_type": "network.connection.blocked",
+  "severity": "low",
+  "actor": {
+    "ip": "10.0.5.15",
+    "port": 50128
+  },
+  "target": {
+    "ip": "198.51.100.99",
+    "port": 22
+  },
+  "artifacts": [
+    {
+      "type": "ip",
+      "value": "198.51.100.99"
+    }
+  ],
+  "raw_event": "10.0.5.15,198.51.100.99,50128,22,tcp,deny,Block_Outbound_SSH",
+  "metadata": {
+    "rule_name": "Block_Outbound_SSH"
+  }
+}

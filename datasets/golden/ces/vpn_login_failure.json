@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "event_id": "0ab9123f-0775-4b9c-b4be-a6a58908b69e",
+  "timestamp": "2026-06-12T08:16:01Z",
+  "source_type": "vpn",
+  "event_type": "authentication.login.failure",
+  "severity": "low",
+  "actor": {
+    "username": "jroberts",
+    "ip": "198.51.100.42"
+  },
+  "target": {
+    "hostname": "vpn.corp.global"
+  },
+  "artifacts": [
+    {
+      "type": "ip",
+      "value": "198.51.100.42"
+    }
+  ],
+  "raw_event": "2026-06-12 08:16:01 ASA-6-113005: AAA user authentication Rejected : reason = AAA failure : server = 10.1.2.3 : user = jroberts",
+  "metadata": {
+    "vpn_group": "Engineering",
+    "reason": "AAA failure"
+  }
+}
