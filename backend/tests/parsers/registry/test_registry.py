@@ -11,11 +11,11 @@ from app.schemas.parser import RawLog
 
 class MockParser(BaseParser):
     def parse(self, raw_log: RawLog) -> CESEvent:
-        pass
+        raise NotImplementedError()
 
 class MockParser2(BaseParser):
     def parse(self, raw_log: RawLog) -> CESEvent:
-        pass
+        raise NotImplementedError()
 
 class InvalidParser:
     pass
