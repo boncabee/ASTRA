@@ -4,3 +4,5 @@ from models.user import User
 from models.correlation import CorrelationRule, CorrelationMatch
 from models.observation import Observation
 from models.policy import Policy, PolicyEvaluation
+from models.evidence import Evidence, AuditEvent
+from models.report import Report, ComplianceMapping

@@ -43,6 +43,15 @@ def create_app() -> FastAPI:
     from api.v1.policies import router as policies_router
     app.include_router(policies_router, prefix="/api/v1/policies", tags=["policies"])
 
+    from api.v1.evidence import router as evidence_router
+    app.include_router(evidence_router, prefix="/api/v1/evidence", tags=["evidence"])
+
+    from api.v1.audit import router as audit_router
+    app.include_router(audit_router, prefix="/api/v1/audit", tags=["audit"])
+
+    from api.v1.reports import router as reports_router
+    app.include_router(reports_router, prefix="/api/v1/reports", tags=["reports"])
+
     return app
 
 app = create_app()
