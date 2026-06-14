@@ -1,6 +1,6 @@
 # ASTRA
 
-Security Event Normalization, Correlation, and Threat Analysis Platform
+Adaptive Security Threat Response & Automation Platform
 
 ---
 
@@ -162,8 +162,9 @@ npm run test
 
 * **Sprint 1**: Establish Common Event Schema (CES) foundation and repository structure. *(Complete)*
 * **Sprint 2**: Implement core Parser Framework, Parser Registry, and parsers (VPN, Windows, Firewall). *(Complete)*
-* **Sprint 3**: Develop Correlation Engine and baseline Detection Engine heuristics. *(Planned)*
-* **Future**: Advanced threat detection, SOAR integrations, and cloud-native auto-scaling.
+* **Sprint 3**: RBAC, Correlation Engine, Observation Engine, Policy Engine. *(Planned)*
+* **Sprint 4**: Case Management, Automation Engine, AI Gateway. *(Planned)*
+* **Sprint 5**: SOAR Integrations, Playbook Engine, Recommendation Engine. *(Planned)*
 
 ---
 

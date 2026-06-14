@@ -284,6 +284,38 @@ Incident Candidate
 
 ---
 
+## Observation Engine
+
+Purpose:
+
+Generate observations from correlated incidents.
+
+---
+
+## Policy Engine
+
+Purpose:
+
+Determine actions based on observations, evidence, confidence, risk, and policy.
+
+---
+
+## Automation Engine
+
+Purpose:
+
+Execute actions derived from the Policy Engine.
+
+---
+
+## AI Gateway & Provider Abstraction Layer
+
+Purpose:
+
+Manage interactions with AI providers (OpenAI, Gemini, Claude, Ollama) ensuring the core platform remains functional if AI is unavailable.
+
+---
+
 ## AI Reasoner
 
 Technology:
@@ -348,37 +380,37 @@ Correlation Engine creates incidents.
 
 Step 5
 
-AKM Layer enriches incidents with attack knowledge.
+Observation Engine generates observations from incidents.
 
 ---
 
 Step 6
 
-Investigation Layer applies playbooks to the incident.
+Policy Engine determines actions based on observations and risk scoring.
 
 ---
 
 Step 7
 
-AI Reasoner analyzes incidents.
+Automation Engine executes defined automated response actions.
 
 ---
 
 Step 8
 
-Validation Layer validates the analysis.
+AKM Layer enriches incidents with attack knowledge.
 
 ---
 
 Step 9
 
-Results stored.
+AI Gateway provides AI-enhanced analysis (Timeline, Narrative).
 
 ---
 
 Step 10
 
-Results displayed.
+Results stored and displayed.
 
 ---
 

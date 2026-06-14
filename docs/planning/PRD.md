@@ -27,24 +27,40 @@ What must ASTRA do?
 
 # Product Summary
 
-ASTRA is an AI-powered security investigation platform that transforms heterogeneous security logs into evidence-backed attack intelligence.
+ASTRA is an Adaptive Security Threat Response & Automation Platform that transforms security telemetry into explainable, auditable, policy-driven security decisions and automated response actions.
 
-The system helps analysts:
+The system helps incident responders and security teams:
 
-* Understand attacks faster
-* Build timelines automatically
-* Generate reports consistently
-* Reduce manual investigation effort
+* Transform raw telemetry into actionable observations
+* Automate decision-making via a configurable Policy Engine
+* Execute automated response actions
+* Leverage AI as an enhancement, not a core dependency
 
 ---
 
 # User Personas
 
+## Incident Responder
+
+Goals:
+
+* Determine root cause
+* Understand attack chain
+* Automate responses based on policy
+
+Pain Points:
+
+* Incomplete visibility
+* Evidence scattered across systems
+* Slow response actions
+
+---
+
 ## SOC Analyst
 
 Goals:
 
-* Investigate alerts
+* Investigate observations
 * Build attack timelines
 * Identify attacker behavior
 
@@ -56,30 +72,33 @@ Pain Points:
 
 ---
 
-## Incident Responder
-
-Goals:
-
-* Determine root cause
-* Understand attack chain
-
-Pain Points:
-
-* Incomplete visibility
-* Evidence scattered across systems
-
----
-
 ## Security Engineer
 
 Goals:
 
 * Improve security posture
 * Analyze attack patterns
+* Manage detection policies
 
 Pain Points:
 
 * Repetitive analysis work
+* Difficult policy management
+
+---
+
+## Administrator
+
+Goals:
+
+* Manage platform health
+* Oversee access and RBAC
+* Ensure AI availability and reliability
+
+Pain Points:
+
+* Complex user management
+* Dependency on single AI providers
 
 ---
 
@@ -352,6 +371,23 @@ ASTRA shall create findings from audits.
 ASTRA shall block releases failing quality gates.
 
 ---
+
+
+## FR-016 Observation Generation
+Description: Generate actionable observations from correlated events.
+Priority: Critical
+
+## FR-017 Policy Engine Evaluation
+Description: Evaluate observations against defined security policies.
+Priority: Critical
+
+## FR-018 Automated Response Actions
+Description: Execute automated response actions based on policy decisions.
+Priority: High
+
+## FR-019 AI Provider Abstraction
+Description: Abstract AI capabilities to support multiple providers (OpenAI, Gemini, Claude, Ollama) and ensure platform functions when AI is unavailable.
+Priority: Critical
 
 # Non-Functional Requirements
 

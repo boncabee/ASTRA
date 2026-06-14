@@ -149,20 +149,18 @@ using AI-assisted reasoning guided by attack knowledge and investigation playboo
 
 # Product Definition
 
-ASTRA is an AI-powered attack investigation platform.
+ASTRA is an Adaptive Security Threat Response & Automation Platform.
 
 ASTRA is NOT:
 
-* SIEM replacement
-* SOAR platform
-* EDR solution
-* Vulnerability scanner
+* A SIEM replacement
+* An AI chatbot
+* An AI-first security platform
+* A pure investigation platform
 
 ASTRA IS:
 
-* Investigation accelerator
-* Incident analysis assistant
-* Security reporting assistant
+* Adaptive Security Threat Response & Automation Platform
 
 Additional Characteristics:
 

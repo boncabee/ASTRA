@@ -77,15 +77,16 @@ Success Criteria:
 
 ---
 
-# Phase 3 — Threat Intelligence
+# Phase 3 — Sprint 3 (Realignment)
 
 Target: v0.3
 
 Features:
 
-* IOC reputation
-* Threat feed integration
-* Campaign correlation
+* RBAC
+* Correlation Engine
+* Observation Engine
+* Policy Engine
 
 Dependencies:
 
@@ -94,62 +95,27 @@ Dependencies:
 
 ---
 
-# Phase 4 — SOC Copilot
+# Phase 4 — Sprint 4
 
 Target: v0.4
 
 Features:
 
-Natural language investigation.
-
-Examples:
-
-```text
-show suspicious powershell activity
-
-show credential dumping activity
-
-show lateral movement incidents
-```
-
-Dependencies:
-
-* PROMPT_ENGINEERING.md
+* Case Management
+* Automation Engine
+* AI Gateway
 
 ---
 
-# Phase 5 — Real-Time Analysis
+# Phase 5 — Sprint 5
 
 Target: v0.5
 
 Features:
 
-* Kafka
-* Event streaming
-* Real-time correlation
-
-Dependencies:
-
-* ARCHITECTURE.md
-
----
-
-# Phase 6 — Enterprise
-
-Target: v1.0
-
-Features:
-
-* Authentication
-* RBAC
-* Multi-tenancy
-* Audit Logs
-* API Keys
-
-Dependencies:
-
-* SECURITY.md
-* THREAT_MODEL.md
+* SOAR Integrations
+* Playbook Engine
+* Recommendation Engine
 
 ---
 

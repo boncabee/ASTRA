@@ -189,7 +189,45 @@
 
 ---
 
-# Architecture Freeze Summary
+
+---
+
+## ADR-016 Product Delivery Model
+**Context:** The platform deployment strategy must be defined.
+**Decision:** Self-Hosted Web Application (Primary), SaaS Edition (Future).
+**Rationale:** Keeps the architecture cloud-agnostic.
+**Status:** Accepted
+
+---
+
+## ADR-017 Authentication & RBAC
+**Context:** Multi-persona support required.
+**Decision:** Implement robust RBAC supporting Incident Responder, SOC Analyst, Security Engineer, and Administrator.
+**Status:** Accepted
+
+---
+
+## ADR-018 AI Provider Abstraction Layer
+**Context:** The platform must not have a core runtime dependency on any single AI provider.
+**Decision:** Implement an AI Gateway and Provider Abstraction Layer.
+**Rationale:** Core platform remains functional if AI providers are unavailable.
+**Status:** Accepted
+
+---
+
+## ADR-019 Observation & Policy Architecture
+**Context:** Simplistic Correlation -> Alert models are insufficient.
+**Decision:** Adopt Correlation -> Observation -> Risk Scoring -> Policy Evaluation -> Action.
+**Rationale:** Provides evidence-based and policy-driven security decisions.
+**Status:** Accepted
+
+---
+
+## ADR-020 Automation Engine Architecture
+**Context:** Automation is a higher priority than mere recommendation.
+**Decision:** Build an Automation Engine to execute actions from the Policy Engine.
+**Status:** Accepted
+\n# Architecture Freeze Summary
 
 **Accepted Decisions:**
 - ADR-001 through ADR-015 are officially approved and frozen for the MVP lifecycle. All implementation agents must adhere to these directives.
