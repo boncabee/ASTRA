@@ -33,6 +33,9 @@ def create_app() -> FastAPI:
     app.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])
     app.include_router(security_router, prefix="/api/v1/security", tags=["security"])
     app.include_router(responders_router, prefix="/api/v1/responders", tags=["responders"])
+    
+    from api.v1.correlations import router as correlations_router
+    app.include_router(correlations_router, prefix="/api/v1/correlations", tags=["correlations"])
 
     return app
 
