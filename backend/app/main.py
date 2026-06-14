@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from api.v1.health import router as health_router
 from api.v1.auth import router as auth_router
+from api.v1.users import router as users_router
 from api.v1.admin import router as admin_router
 from api.v1.security import router as security_router
 from api.v1.responders import router as responders_router
@@ -28,6 +29,7 @@ def create_app() -> FastAPI:
     # Include routers
     app.include_router(health_router, prefix="/api/v1")
     app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
+    app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
     app.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])
     app.include_router(security_router, prefix="/api/v1/security", tags=["security"])
     app.include_router(responders_router, prefix="/api/v1/responders", tags=["responders"])
