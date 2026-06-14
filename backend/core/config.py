@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
+    # Correlation Engine Constants
+    CORRELATION_SCORE_MULTIPLIER: int = 5
+    CORRELATION_SCORE_MAX: int = 100
+    
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 
 settings = Settings()
