@@ -46,5 +46,51 @@ Successfully implemented the Correlation API (TASK-3013), finalizing the executi
 ## Open Issues
 * The Phase 2 API serves analytical aggregates natively; downstream sorting algorithms on the React frontend might be required to build real-time views if historical query bounds are massive.
 
+## Potential Problems & Risks
+
+### Immediate Risks
+* **Description**: The Phase 2 API serves analytical aggregates natively; downstream sorting and filtering on the React frontend may lag if payloads are large.
+* **Likelihood**: Medium
+* **Impact**: Medium
+* **Suggested Mitigation**: Ensure frontend implementations implement proper paginated requests rather than fetching full datasets.
+
+### Short-Term Risks
+* **Description**: Lacking integration with the Phase 3 Observation Engine may lead to mismatched assumptions on API consumption patterns.
+* **Likelihood**: Low
+* **Impact**: Low
+* **Suggested Mitigation**: Collaborate closely during Phase 3 to adjust output schemas if the Observation Engine requires additional metadata.
+
+### Long-Term Risks
+* **Description**: Read-only endpoints might require complex caching strategies as historical correlation data grows exponentially.
+* **Likelihood**: Medium
+* **Impact**: High
+* **Suggested Mitigation**: Introduce Redis or similar caching layers for frequently accessed rules and recent matches.
+
+### Operational Risks
+* **Description**: Test DB overrides rely on SQLite memory regeneration, which can obscure subtle differences from a production PostgreSQL environment.
+* **Likelihood**: Medium
+* **Impact**: Medium
+* **Suggested Mitigation**: Incorporate standard test containers running PostgreSQL in the CI pipeline for closer production parity.
+
+### Security Risks
+* **Description**: Read-only APIs are secured with RBAC, but broad generic roles still have access to all correlation data.
+* **Likelihood**: Low
+* **Impact**: Medium
+* **Suggested Mitigation**: Evaluate need for strict row-level security (RLS) depending on organizational compliance requirements.
+
+### Performance Risks
+* **Description**: Deep pagination (high `skip` values) on massive correlation sets might result in degraded query performance.
+* **Likelihood**: High
+* **Impact**: Medium
+* **Suggested Mitigation**: Use keyset pagination (cursor-based) instead of OFFSET/LIMIT for handling large volumes of historical correlations.
+
+### Architecture Risks
+* **Description**: Direct exposure of internal DB indices to the API filtering might tightly couple the API contract to the underlying DB schema.
+* **Likelihood**: Low
+* **Impact**: Low
+* **Suggested Mitigation**: Maintain strict separation through Pydantic response models and consider GraphQL or BFF (Backend-for-Frontend) if the schema becomes highly complex.
+
+---
+
 ## Phase Status
 **PASS**

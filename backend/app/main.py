@@ -40,6 +40,9 @@ def create_app() -> FastAPI:
     from api.v1.observations import router as observations_router
     app.include_router(observations_router, prefix="/api/v1/observations", tags=["observations"])
 
+    from api.v1.policies import router as policies_router
+    app.include_router(policies_router, prefix="/api/v1/policies", tags=["policies"])
+
     return app
 
 app = create_app()

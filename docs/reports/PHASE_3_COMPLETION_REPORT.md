@@ -86,6 +86,52 @@ A robust suite of `pytest` assertions has been integrated:
 
 ---
 
+## Potential Problems & Risks
+
+### Immediate Risks
+* **Description**: `Classification` defaults broadly and `Asset Criticality` relies on a static baseline score of 50.
+* **Likelihood**: High
+* **Impact**: Medium
+* **Suggested Mitigation**: Implement dynamic host-risk lookup resolution and explicit classification mappings in Phase 4.
+
+### Short-Term Risks
+* **Description**: `CorrelationRule` attributes like the specific anomaly type are not fully instantiated natively in `CorrelationMatch`, requiring mocked baseline inputs during testing.
+* **Likelihood**: Medium
+* **Impact**: Low
+* **Suggested Mitigation**: Expand test datasets to include fully instantiated `CorrelationMatch` data mapped to specific anomalies.
+
+### Long-Term Risks
+* **Description**: The deterministic risk scoring formula maxing at 100 might need continuous recalibration as new telemetry types are ingested.
+* **Likelihood**: Medium
+* **Impact**: Medium
+* **Suggested Mitigation**: Transition to a dynamically loadable, weighted formula configuration instead of hardcoded rules.
+
+### Operational Risks
+* **Description**: Unpredictable bursts of massive Correlation events might delay Observation generation.
+* **Likelihood**: Low
+* **Impact**: Medium
+* **Suggested Mitigation**: Monitor processing latency and consider offloading to asynchronous worker queues (e.g., Celery) if needed.
+
+### Security Risks
+* **Description**: Broad read access to Observations may expose sensitive indicators to all authenticated personas.
+* **Likelihood**: Low
+* **Impact**: Medium
+* **Suggested Mitigation**: Consider implementing granular, record-level or tenant-based visibility controls in future iterations.
+
+### Performance Risks
+* **Description**: Iteratively generating Observations per match could bottleneck database connections under extreme load (10k+ matches/day).
+* **Likelihood**: Medium
+* **Impact**: High
+* **Suggested Mitigation**: Implement bulk-insert optimizations (e.g., `executemany`) within `ObservationRepository` for grouped matches.
+
+### Architecture Risks
+* **Description**: Synchronous triggering of Observation logic from Correlation pipelines could complicate independent scaling.
+* **Likelihood**: Low
+* **Impact**: Medium
+* **Suggested Mitigation**: Introduce an event-driven pub-sub mechanism to decouple the Correlation state from Observation generation.
+
+---
+
 ## Phase Status
 **PASS**
 The Observation MVP accurately binds logic parsing while retaining strict schema contracts. Development for Phase 4 (Policy Engine) can confidently integrate.
