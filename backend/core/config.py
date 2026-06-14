@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
     
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/astra"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./astra.db"
     
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 
