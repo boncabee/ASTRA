@@ -8,7 +8,7 @@ from app.schemas.ces import CESEvent, SourceType, Severity, Entity, EventCategor
 from models.correlation import CorrelationRule, CorrelationMatch
 from services.correlation import run_correlation_cycle
 
-def create_mock_event(event_type: str, timestamp: str, actor_username: str = None) -> CESEvent:
+def create_mock_event(event_type: str, timestamp: str, actor_username: str | None = None) -> CESEvent:
     actor = None
     if actor_username:
         actor = Entity(username=actor_username)

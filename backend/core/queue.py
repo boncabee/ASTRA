@@ -11,7 +11,7 @@ class AutomationJob:
 class AutomationQueueManager:
     _instance: Optional['AutomationQueueManager'] = None
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.queue: asyncio.Queue[AutomationJob] = asyncio.Queue()
     
     @classmethod
@@ -20,7 +20,7 @@ class AutomationQueueManager:
             cls._instance = AutomationQueueManager()
         return cls._instance
     
-    async def enqueue(self, job: AutomationJob):
+    async def enqueue(self, job: AutomationJob) -> None:
         await self.queue.put(job)
         
     async def dequeue(self) -> AutomationJob:

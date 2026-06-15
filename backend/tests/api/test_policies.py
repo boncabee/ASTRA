@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
@@ -16,7 +17,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -140,3 +141,4 @@ async def test_list_evaluations(override_get_db, client: AsyncClient, analyst_he
     assert res.status_code == 200
     assert "data" in res.json()
     assert isinstance(res.json()["data"], list)
+

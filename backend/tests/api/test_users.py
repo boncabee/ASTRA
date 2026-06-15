@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
@@ -15,7 +16,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -142,3 +143,4 @@ async def test_user_not_found(override_get_db, async_client, users):
     fake_id = str(uuid.uuid4())
     res = await async_client.get(f"/api/v1/users/{fake_id}", headers=headers)
     assert res.status_code == 404
+

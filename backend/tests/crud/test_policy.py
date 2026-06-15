@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
@@ -17,7 +18,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -101,3 +102,4 @@ async def test_record_evaluation(db_session):
     evals, total = await repo.list_evaluations()
     assert total >= 1
     assert any(e.id == record.id for e in evals)
+

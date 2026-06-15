@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
@@ -18,7 +19,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -104,3 +105,4 @@ async def test_matches_filtering(override_get_db, client: AsyncClient, auth_head
     response = await client.get("/api/v1/correlations/matches?min_score=50&limit=10", headers=auth_headers)
     assert response.status_code == 200
     assert "data" in response.json()
+

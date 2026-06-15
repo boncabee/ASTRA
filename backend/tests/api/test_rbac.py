@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
@@ -14,7 +15,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -139,3 +140,4 @@ async def test_rbac_logging(override_get_db, async_client, users, caplog):
     # Check if a log was emitted
     log_records = [record for record in caplog.records if "Unauthorized access attempt" in record.message]
     assert len(log_records) > 0
+

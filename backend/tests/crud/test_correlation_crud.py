@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
@@ -15,7 +16,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -102,12 +103,11 @@ async def test_create_and_get_matches(db_session):
 
 @pytest.mark.asyncio
 async def test_schema_indexes(db_session):
-    # Verify indexes exist in sqlite metadata
-    result = await db_session.execute(text("PRAGMA index_list('correlation_matches');"))
+    # Verify indexes exist in postgres metadata
+    result = await db_session.execute(text("SELECT indexname FROM pg_indexes WHERE tablename = 'correlation_matches';"))
     indexes = result.fetchall()
-    index_names = [i[1] for i in indexes]
+    index_names = [i[0] for i in indexes]
     
-    # SQLite creates indexes. Check for our explicitly named ones or standard ones
     assert any("ix_correlation_matches_correlation_score" in name for name in index_names)
     assert any("ix_correlation_matches_created_at" in name for name in index_names)
     assert any("ix_correlation_matches_match_timestamp" in name for name in index_names)
@@ -149,3 +149,4 @@ async def test_performance_benchmark(db_session):
     
     assert len(res) == 10000
     assert (end - start) < 1.0 # Should be very fast with indexes
+

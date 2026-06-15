@@ -12,7 +12,7 @@ from models.user import User, UserRole
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -148,3 +148,4 @@ async def test_get_me_expired_token(override_get_db, async_client, test_user):
         headers={"Authorization": f"Bearer {token}"}
     )
     assert me_response.status_code == 401
+

@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
@@ -15,7 +16,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -85,3 +86,4 @@ async def test_get_provenance_not_found(override_get_db, client: AsyncClient, an
     response = await client.get(f"/api/v1/audit/provenance/{fake_id}", headers=analyst_headers)
     assert response.status_code == 404
     assert "not found" in response.json()["error"]
+

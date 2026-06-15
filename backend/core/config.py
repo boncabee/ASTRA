@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/astra"
+    TEST_DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/astra_test"
     
     # JWT Authentication
     JWT_SECRET_KEY: str = "supersecretkey_please_override_in_env"

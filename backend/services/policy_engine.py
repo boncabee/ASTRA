@@ -38,7 +38,7 @@ class PolicyEngineService:
             conflicting_policies = [p for p in matched_policies if p.priority == highest_priority]
             
             chosen_policy = conflicting_policies[0]
-            final_action = chosen_policy.action
+            final_action = chosen_policy.action  # type: ignore[assignment]
             final_policy_id = chosen_policy.id
             decision_reason = f"Matched policy '{chosen_policy.name}' (Priority {chosen_policy.priority})"
             

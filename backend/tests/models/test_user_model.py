@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
@@ -9,7 +10,7 @@ from models.user import User, UserRole
 
 @pytest_asyncio.fixture
 async def async_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -103,3 +104,4 @@ async def test_role_enum_values(async_session):
     db_user = result.scalar_one_or_none()
     
     assert db_user.role == "Security Engineer"
+

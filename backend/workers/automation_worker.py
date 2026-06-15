@@ -10,18 +10,18 @@ from integrations.providers import get_provider
 logger = logging.getLogger(__name__)
 
 class AutomationWorker:
-    def __init__(self):
-        self.is_running = False
-        self._task = None
+    def __init__(self) -> None:
+        self.is_running: bool = False
+        self._task: asyncio.Task[None] | None = None
 
-    async def start(self):
+    async def start(self) -> None:
         if self.is_running:
             return
         self.is_running = True
         self._task = asyncio.create_task(self._run_loop())
         logger.info("AutomationWorker started.")
 
-    async def stop(self):
+    async def stop(self) -> None:
         self.is_running = False
         if self._task:
             self._task.cancel()
@@ -31,7 +31,7 @@ class AutomationWorker:
                 pass
         logger.info("AutomationWorker stopped.")
 
-    async def _run_loop(self):
+    async def _run_loop(self) -> None:
         while self.is_running:
             try:
                 job: AutomationJob = await automation_queue.dequeue()
@@ -42,7 +42,7 @@ class AutomationWorker:
             except Exception as e:
                 logger.error(f"Error in AutomationWorker loop: {e}")
 
-    async def _process_job(self, job: AutomationJob):
+    async def _process_job(self, job: AutomationJob) -> None:
         logger.info(f"Processing automation job for execution {job.execution_id}")
         async with SessionLocal() as session:
             try:

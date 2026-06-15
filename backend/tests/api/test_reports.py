@@ -1,3 +1,4 @@
+from core.config import settings
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
@@ -16,7 +17,7 @@ def anyio_backend():
 
 @pytest_asyncio.fixture
 async def db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    engine = create_async_engine(settings.TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
@@ -141,3 +142,4 @@ async def test_get_report_history(override_get_db, client: AsyncClient, soc_head
     assert response.status_code == 200, response.json()
     data = response.json()
     assert isinstance(data, list)
+
