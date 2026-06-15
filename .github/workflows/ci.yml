@@ -19,7 +19,7 @@ jobs:
       working-directory: ./backend
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements.txt -r requirements-dev.txt
     - name: Lint with ruff
       working-directory: ./backend
       run: |
@@ -28,7 +28,7 @@ jobs:
     - name: Test with pytest
       working-directory: ./backend
       run: |
-        pytest --cov=app tests/
+        pytest --cov=app --cov-fail-under=100 tests/
 
   lint-and-test-frontend:
     runs-on: ubuntu-latest
@@ -46,7 +46,7 @@ jobs:
       run: npm run lint
     - name: Test
       working-directory: ./frontend
-      run: npm test || echo "Tests not setup fully yet"
+      run: npm test
 
   security-scan:
     runs-on: ubuntu-latest
@@ -59,6 +59,11 @@ jobs:
       run: |
         pip install pip-audit
         pip-audit -r requirements.txt
+    - name: Bandit Security Scan
+      working-directory: ./backend
+      run: |
+        pip install bandit
+        bandit -r app/ models/ core/ api/ services/ repositories/
     - name: Dependency Scan Frontend
       working-directory: ./frontend
       run: npm audit

@@ -46,17 +46,17 @@ class AuditEngineService:
                 "policy_id": str(ev.policy_id) if ev.policy_id else None,
                 "evaluation_time": ev.evaluation_time.isoformat() if ev.evaluation_time else None,
                 "decision_reason": ev.decision_reason,
-                "action": ev.action.value
+                "action": getattr(ev.action, 'value', str(ev.action))  # type: ignore
             } for ev in evaluations
         ]
 
         # 4. Construct Response
         response = DecisionProvenanceResponse(
-            observation_id=observation.id,
-            status=observation.status.value,
+            observation_id=uuid.UUID(str(observation.id)),
+            status=getattr(observation.status, 'value', str(observation.status)),  # type: ignore
             risk_score=observation.risk_score,
             classification=observation.classification,
-            policy_action=observation.policy_action.value if observation.policy_action else None,
+            policy_action=getattr(observation.policy_action, 'value', str(observation.policy_action)) if observation.policy_action else None,  # type: ignore
             evidence=serialized_evidence,
             evaluations=serialized_evaluations
         )

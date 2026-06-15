@@ -27,7 +27,7 @@ class ReportService:
         total_fetched = 0
         
         observation_ids = []
-        classifications = {}
+        classifications: Dict[str, int] = {}
         risk_scores = []
         
         while total_fetched < max_observations:

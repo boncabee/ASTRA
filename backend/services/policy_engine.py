@@ -26,7 +26,7 @@ class PolicyEngineService:
 
         # Handle matches and conflicts
         decision_reason = "No matching policy found"
-        final_action = PolicyAction.OBSERVE
+        final_action: PolicyAction = PolicyAction.OBSERVE  # type: ignore
         final_policy_id = None
         
         if len(matched_policies) > 0:

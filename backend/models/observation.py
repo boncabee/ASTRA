@@ -1,3 +1,5 @@
+from typing import Any
+from sqlalchemy.orm import Mapped, mapped_column
 import uuid
 import enum
 from sqlalchemy import Column, String, Integer, ForeignKey, Enum as SQLEnum, Index
@@ -27,12 +29,12 @@ class Observation(AuditMixin, Base):
         Index("ix_observations_created_at", "created_at"),
     )
 
-    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    title = Column(String, nullable=False)
-    description = Column(String, nullable=False)
-    correlation_id = Column(Uuid(as_uuid=True), ForeignKey("correlation_matches.id"), nullable=False, unique=True, index=True)
-    classification = Column(String, nullable=False)
-    status = Column(SQLEnum(ObservationStatus), nullable=False, default=ObservationStatus.NEW)
-    risk_score = Column(Integer, nullable=False)
-    policy_action = Column(SQLEnum(PolicyAction), nullable=True)
-    evidence_count = Column(Integer, nullable=False, default=0)
+    id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=False)
+    correlation_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), ForeignKey("correlation_matches.id"), nullable=False, unique=True, index=True)
+    classification: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[Any | None] = mapped_column(SQLEnum(ObservationStatus), nullable=False, default=ObservationStatus.NEW)
+    risk_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    policy_action: Mapped[Any | None] = mapped_column(SQLEnum(PolicyAction), nullable=True)
+    evidence_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

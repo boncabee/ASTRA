@@ -60,7 +60,7 @@ class FirewallParser(BaseParser):
             if raw_key in data and data[raw_key] is not None:
                 mapped_data[ces_key] = str(data[raw_key])
 
-        actor_data = {}
+        actor_data: Dict[str, Any] = {}
         if "source.ip" in mapped_data:
             actor_data["ip"] = mapped_data["source.ip"]
         if "source.port" in mapped_data:
@@ -73,7 +73,7 @@ class FirewallParser(BaseParser):
         else:
             actor = None
 
-        target_data = {}
+        target_data: Dict[str, Any] = {}
         if "target.ip" in mapped_data:
             target_data["ip"] = mapped_data["target.ip"]
         if "target.port" in mapped_data:

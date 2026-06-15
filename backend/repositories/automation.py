@@ -12,12 +12,12 @@ class AutomationRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create_request(self, request_data: AutomationRequestCreate, user_id: str) -> AutomationRequest:
+    async def create_request(self, data: AutomationRequestCreate, created_by: str) -> Tuple[AutomationRequest, AutomationExecution]:
         db_request = AutomationRequest(
-            policy_id=request_data.policy_id,
-            action=request_data.action,
-            parameters=request_data.parameters,
-            created_by=user_id,
+            policy_id=data.policy_id,
+            action=data.action,
+            parameters=data.parameters,
+            created_by=created_by,
             state=AutomationState.PENDING
         )
         self.session.add(db_request)

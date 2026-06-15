@@ -7,8 +7,9 @@ from sqlalchemy import select
 from core.config import settings
 from core.database import get_db
 from core.security import verify_password, create_access_token
-from models.user import User
+from models.user import User, UserRole
 from api.deps import get_current_user
+from core.rbac import RequireRoles
 
 router = APIRouter()
 
@@ -35,7 +36,7 @@ async def login(
         
     access_token = create_access_token(
         subject=user.id,
-        role=user.role
+        role=str(getattr(user.role, 'value', user.role))  # type: ignore
     )
     
     return {
@@ -44,7 +45,7 @@ async def login(
         "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
     }
 
-@router.get("/me")
+@router.get("/me", dependencies=[Depends(RequireRoles([UserRole.ADMINISTRATOR, UserRole.SECURITY_ENGINEER, UserRole.INCIDENT_RESPONDER, UserRole.SOC_ANALYST]))])
 async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
     return {
         "id": current_user.id,

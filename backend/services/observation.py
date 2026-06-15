@@ -24,7 +24,7 @@ class ObservationService:
         start_time = time.perf_counter()
         
         # Duplicate Prevention
-        existing = await self.repository.get_by_correlation_id(match.id)
+        existing = await self.repository.get_by_correlation_id(match.id)  # type: ignore
         if existing:
             return existing
 
@@ -40,7 +40,7 @@ class ObservationService:
         data = ObservationCreate(
             title=f"Observation from Correlation {match.id}",
             description=f"Generated from rule {match.rule_id} with {event_volume} events.",
-            correlation_id=match.id,
+            correlation_id=match.id,  # type: ignore
             classification="Anomaly",
             status=ObservationStatus.NEW,
             risk_score=risk_score,
@@ -75,7 +75,7 @@ class ObservationService:
             ObservationStatus.RESOLVED: []
         }
 
-        if new_status not in valid_transitions.get(observation.status, []):
+        if new_status not in valid_transitions.get(observation.status, []):  # type: ignore
             raise ValueError(f"Invalid transition from {observation.status} to {new_status}")
 
         observation.status = new_status

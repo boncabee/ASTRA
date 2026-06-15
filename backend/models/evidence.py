@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Any
+from sqlalchemy.orm import Mapped, mapped_column
 import uuid
 import enum
 from sqlalchemy import Column, String, ForeignKey, Enum as SQLEnum, Index, DateTime, JSON
@@ -19,14 +22,14 @@ class Evidence(Base):
         Index("ix_evidence_created_at", "created_at"),
     )
 
-    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    observation_id = Column(Uuid(as_uuid=True), ForeignKey("observations.id"), nullable=False)
-    evidence_type = Column(SQLEnum(EvidenceType), nullable=False)
-    source = Column(String, nullable=False)
-    content_reference = Column(String, nullable=False)
-    hash_value = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    created_by = Column(String, nullable=False)
+    id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    observation_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), ForeignKey("observations.id"), nullable=False)
+    evidence_type: Mapped[Any | None] = mapped_column(SQLEnum(EvidenceType), nullable=False)
+    source: Mapped[str] = mapped_column(String, nullable=False)
+    content_reference: Mapped[str] = mapped_column(String, nullable=False)
+    hash_value: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_by: Mapped[str] = mapped_column(String, nullable=False)
 
 class AuditEvent(Base):
     __tablename__ = "audit_events"
@@ -36,12 +39,12 @@ class AuditEvent(Base):
         Index("ix_audit_events_timestamp", "timestamp"),
     )
 
-    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    entity_type = Column(String, nullable=False)
-    entity_id = Column(Uuid(as_uuid=True), nullable=False)
-    action = Column(String, nullable=False)
-    actor = Column(String, nullable=False)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    old_value = Column(JSON, nullable=True)
-    new_value = Column(JSON, nullable=True)
-    reason = Column(String, nullable=True)
+    id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    entity_type: Mapped[str] = mapped_column(String, nullable=False)
+    entity_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=False)
+    action: Mapped[str] = mapped_column(String, nullable=False)
+    actor: Mapped[str] = mapped_column(String, nullable=False)
+    timestamp: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    old_value: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    new_value: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    reason: Mapped[str | None] = mapped_column(String, nullable=True)

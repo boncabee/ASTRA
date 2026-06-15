@@ -29,7 +29,7 @@ class ReportRepository:
                 self.session.add(compliance)
         
         await self.session.commit()
-        return await self.get_report(report.id)
+        return await self.get_report(report.id)  # type: ignore
 
     async def get_report(self, report_id: UUID) -> Optional[Report]:
         query = select(Report).options(selectinload(Report.compliance_mappings)).where(Report.id == report_id)

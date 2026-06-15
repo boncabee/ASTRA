@@ -18,7 +18,7 @@ class AutomationService:
         job = AutomationJob(
             execution_id=str(execution.id),
             request_id=str(request.id),
-            action=request.action.value,
+            action=getattr(request_data.action, 'value', str(request_data.action)),  # type: ignore
             parameters=request.parameters
         )
         

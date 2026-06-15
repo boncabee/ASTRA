@@ -58,14 +58,14 @@ class WindowsParser(BaseParser):
             if raw_key in data and data[raw_key] is not None:
                 mapped_data[ces_key] = str(data[raw_key])
 
-        actor_data = {}
+        actor_data: Dict[str, Any] = {}
         if "actor.username" in mapped_data:
             actor_data["username"] = mapped_data["actor.username"]
         if "actor.domain" in mapped_data:
             actor_data["domain"] = mapped_data["actor.domain"]
         actor = Entity(**actor_data) if actor_data else None
 
-        target_data = {}
+        target_data: Dict[str, Any] = {}
         if "target.hostname" in mapped_data:
             target_data["hostname"] = mapped_data["target.hostname"]
         target = Entity(**target_data) if target_data else None

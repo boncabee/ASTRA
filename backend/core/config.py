@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
     
     # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./astra.db"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/astra"
     
     # JWT Authentication
     JWT_SECRET_KEY: str = "supersecretkey_please_override_in_env"
