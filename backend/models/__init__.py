@@ -6,3 +6,4 @@ from models.observation import Observation
 from models.policy import Policy, PolicyEvaluation
 from models.evidence import Evidence, AuditEvent
 from models.report import Report, ComplianceMapping
+from models.automation import AutomationRequest, AutomationExecution

@@ -9,12 +9,22 @@ from api.v1.responders import router as responders_router
 from core.config import settings
 from core.rbac import enforce_deny_by_default
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    from workers.automation_worker import automation_worker
+    await automation_worker.start()
+    yield
+    await automation_worker.stop()
+
 def create_app() -> FastAPI:
     app = FastAPI(
         title="ASTRA API",
         version="1.0.0",
         description="ASTRA Backend API",
-        dependencies=[Depends(enforce_deny_by_default)]
+        dependencies=[Depends(enforce_deny_by_default)],
+        lifespan=lifespan
     )
 
     # CORS Middleware
@@ -51,6 +61,9 @@ def create_app() -> FastAPI:
 
     from api.v1.reports import router as reports_router
     app.include_router(reports_router, prefix="/api/v1/reports", tags=["reports"])
+
+    from api.v1.automation import router as automation_router
+    app.include_router(automation_router, prefix="/api/v1/automation", tags=["automation"])
 
     return app
 
