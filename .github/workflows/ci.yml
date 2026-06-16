@@ -45,7 +45,7 @@ jobs:
         DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/astra_test
         TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/astra_test
       run: |
-        pytest --cov=app --cov-fail-under=99 tests/
+        pytest --cov=app --cov=models --cov=repositories --cov=services --cov-fail-under=99 tests/
 
   lint-and-test-frontend:
     runs-on: ubuntu-latest
