@@ -88,12 +88,36 @@ async def mock_case(db_session):
 
 @pytest_asyncio.fixture
 async def mock_evidence(db_session):
-    # Evidence needs an observation, so mock that first
+    from datetime import datetime, timezone
+    from models.correlation import CorrelationRule, CorrelationMatch
     from models.observation import Observation, ObservationStatus
+
+    rule = CorrelationRule(
+        name="Test Rule",
+        description="Test Desc",
+        event_types=["test.event"],
+        conditions={},
+        time_window=60,
+        severity_weight=50
+    )
+    db_session.add(rule)
+    await db_session.flush()
+
+    match = CorrelationMatch(
+        rule_id=rule.id,
+        matched_events=["test-event-uuid"],
+        event_count=1,
+        match_timestamp=datetime.now(timezone.utc),
+        correlation_score=50,
+        context={}
+    )
+    db_session.add(match)
+    await db_session.flush()
+
     obs = Observation(
         title="Test Obs",
         description="Test Desc",
-        correlation_id=uuid.uuid4(),
+        correlation_id=match.id,
         classification="Anomaly",
         status=ObservationStatus.NEW,
         risk_score=75,

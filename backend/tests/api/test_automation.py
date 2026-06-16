@@ -73,9 +73,27 @@ async def client():
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
 
+from models.policy import Policy
+from models.observation import PolicyAction
+
+@pytest_asyncio.fixture
+async def mock_policy(db_session):
+    policy = Policy(
+        name="Test Policy",
+        description="Test Desc",
+        action=PolicyAction.REVIEW_REQUIRED,
+        priority=100,
+        is_active=True,
+        condition_risk_min=50
+    )
+    db_session.add(policy)
+    await db_session.commit()
+    await db_session.refresh(policy)
+    return policy
+
 @pytest.mark.asyncio
-async def test_create_automation_request_admin(override_get_db, client: AsyncClient, admin_headers):
-    policy_id = str(uuid.uuid4())
+async def test_create_automation_request_admin(override_get_db, client: AsyncClient, admin_headers, mock_policy):
+    policy_id = str(mock_policy.id)
     payload = {
         "policy_id": policy_id,
         "action": "NOTIFY_WEBHOOK",
@@ -96,9 +114,9 @@ async def test_create_automation_request_admin(override_get_db, client: AsyncCli
     assert "id" in data
 
 @pytest.mark.asyncio
-async def test_create_automation_request_unauthorized(override_get_db, client: AsyncClient, soc_headers):
+async def test_create_automation_request_unauthorized(override_get_db, client: AsyncClient, soc_headers, mock_policy):
     payload = {
-        "policy_id": str(uuid.uuid4()),
+        "policy_id": str(mock_policy.id),
         "action": "NOTIFY_WEBHOOK",
         "parameters": {"url": "http://example.com/webhook"}
     }
@@ -125,8 +143,8 @@ async def test_get_metrics(override_get_db, client: AsyncClient, admin_headers):
     assert "queue_depth" in data
 
 @pytest.mark.asyncio
-async def test_automation_worker_processing(override_get_db, client: AsyncClient, admin_headers):
-    policy_id = str(uuid.uuid4())
+async def test_automation_worker_processing(override_get_db, client: AsyncClient, admin_headers, mock_policy):
+    policy_id = str(mock_policy.id)
     payload = {
         "policy_id": policy_id,
         "action": "LOG_ACTION",
@@ -153,14 +171,15 @@ async def test_automation_worker_processing(override_get_db, client: AsyncClient
     assert data["state"] in ["RUNNING", "SUCCESS", "PENDING"]
 
 @pytest.mark.asyncio
-async def test_performance_no_blocking(override_get_db, client: AsyncClient, admin_headers):
+async def test_performance_no_blocking(override_get_db, client: AsyncClient, admin_headers, mock_policy):
     start_time = time.time()
     for _ in range(50):
         payload = {
-            "policy_id": str(uuid.uuid4()),
+            "policy_id": str(mock_policy.id),
             "action": "LOG_ACTION",
             "parameters": {"test": "perf"}
         }
+
         resp = await client.post("/api/v1/automation", headers=admin_headers, json=payload)
         assert resp.status_code == 202
         

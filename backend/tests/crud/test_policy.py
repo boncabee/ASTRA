@@ -86,11 +86,54 @@ async def test_get_active_policies(db_session):
     names = [p.name for p in active_policies if p.name in ("P1", "P2", "P3")]
     assert names == ["P2", "P1"]
 
+from models.observation import Observation, ObservationStatus
+from models.correlation import CorrelationRule, CorrelationMatch
+
+async def make_observation(db_session):
+    rule = CorrelationRule(
+        name=f"Rule {uuid.uuid4()}",
+        description="Test Desc",
+        event_types=["test.event"],
+        conditions={},
+        time_window=60,
+        severity_weight=50
+    )
+    db_session.add(rule)
+    await db_session.flush()
+
+    match = CorrelationMatch(
+        rule_id=rule.id,
+        matched_events=["test-event-uuid"],
+        event_count=1,
+        match_timestamp=datetime.now(timezone.utc),
+        correlation_score=50,
+        context={}
+    )
+    db_session.add(match)
+    await db_session.flush()
+
+    obs = Observation(
+        id=uuid.uuid4(),
+        title="Test Obs",
+        description="Desc",
+        correlation_id=match.id,
+        classification="Anomaly",
+        status=ObservationStatus.NEW,
+        risk_score=50,
+        evidence_count=1
+    )
+    db_session.add(obs)
+    await db_session.commit()
+    await db_session.refresh(obs)
+    return obs
+
 @pytest.mark.asyncio
 async def test_record_evaluation(db_session):
     repo = PolicyRepository(db_session)
+    obs = await make_observation(db_session)
+    
     eval_in = PolicyEvaluation(
-        observation_id=uuid.uuid4(),
+        observation_id=obs.id,
         decision_reason="Test reason",
         action=PolicyAction.NOTIFY
     )

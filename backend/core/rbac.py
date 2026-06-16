@@ -20,6 +20,8 @@ class RequireRoles:
         self.allowed_roles = allowed_roles
         
     async def __call__(self, request: Request, current_user: User = Depends(get_current_user)):
+        with open("rbac_debug.txt", "a") as f:
+            f.write(f"current_user.role={repr(current_user.role)}, allowed={[repr(r) for r in self.allowed_roles]}\n")
         if current_user.role not in self.allowed_roles:
             log_unauthorized_access(
                 request=request, 
@@ -44,9 +46,18 @@ async def enforce_deny_by_default(request: Request):
         return
         
     has_rbac = False
+    
+    # Check dependencies at the route level
     if hasattr(route, "dependencies"):
         for dep in route.dependencies:
             if hasattr(dep.dependency, "__class__") and dep.dependency.__class__.__name__ == "RequireRoles":
+                has_rbac = True
+                break
+                
+    # Check dependencies in function parameters
+    if not has_rbac and hasattr(route, "dependant") and hasattr(route.dependant, "dependencies"):
+        for dep in route.dependant.dependencies:
+            if hasattr(dep.call, "__class__") and dep.call.__class__.__name__ == "RequireRoles":
                 has_rbac = True
                 break
                 

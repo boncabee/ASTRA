@@ -29,24 +29,65 @@ async def db_session():
         await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
 
-@pytest.mark.asyncio
-async def test_decision_provenance(db_session):
-    obs_id = uuid.uuid4()
-    pol_id = uuid.uuid4()
-    
-    # 1. Setup Observation
+from models.correlation import CorrelationRule, CorrelationMatch
+from datetime import timezone
+
+async def make_observation(db_session, risk_score=50, classification="Auth", status=ObservationStatus.NEW, action=PolicyAction.REVIEW_REQUIRED):
+    rule = CorrelationRule(
+        name=f"Rule {uuid.uuid4()}",
+        description="Test Desc",
+        event_types=["test.event"],
+        conditions={},
+        time_window=60,
+        severity_weight=50
+    )
+    db_session.add(rule)
+    await db_session.flush()
+
+    match = CorrelationMatch(
+        rule_id=rule.id,
+        matched_events=["test-event-uuid"],
+        event_count=1,
+        match_timestamp=datetime.now(timezone.utc),
+        correlation_score=50,
+        context={}
+    )
+    db_session.add(match)
+    await db_session.flush()
+
     obs = Observation(
-        id=obs_id,
+        id=uuid.uuid4(),
         title="Test Obs",
         description="Desc",
-        correlation_id=uuid.uuid4(),
-        classification="Malware",
-        status=ObservationStatus.POLICY_EVALUATED,
-        risk_score=85,
-        policy_action=PolicyAction.REVIEW_REQUIRED,
+        correlation_id=match.id,
+        classification=classification,
+        status=status,
+        risk_score=risk_score,
+        policy_action=action,
         evidence_count=1
     )
     db_session.add(obs)
+    await db_session.commit()
+    await db_session.refresh(obs)
+    return obs
+
+@pytest.mark.asyncio
+async def test_decision_provenance(db_session):
+    obs = await make_observation(db_session, risk_score=85, classification="Malware", status=ObservationStatus.POLICY_EVALUATED, action=PolicyAction.REVIEW_REQUIRED)
+    obs_id = obs.id
+    pol_id = uuid.uuid4()
+    
+    from models.policy import Policy
+    policy = Policy(
+        id=pol_id,
+        name="Test Policy",
+        description="Desc",
+        action=PolicyAction.REVIEW_REQUIRED,
+        priority=100,
+        is_active=True
+    )
+    db_session.add(policy)
+    await db_session.flush()
     
     # 2. Setup Evaluation
     pe = PolicyEvaluation(

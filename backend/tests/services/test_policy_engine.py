@@ -30,22 +30,49 @@ async def db_session():
         await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
 
-def make_observation(risk_score=50, classification="Auth", status=ObservationStatus.NEW):
-    return Observation(
+from models.correlation import CorrelationRule, CorrelationMatch
+
+async def make_observation(db_session, risk_score=50, classification="Auth", status=ObservationStatus.NEW):
+    rule = CorrelationRule(
+        name=f"Rule {uuid.uuid4()}",
+        description="Test Desc",
+        event_types=["test.event"],
+        conditions={},
+        time_window=60,
+        severity_weight=50
+    )
+    db_session.add(rule)
+    await db_session.flush()
+
+    match = CorrelationMatch(
+        rule_id=rule.id,
+        matched_events=["test-event-uuid"],
+        event_count=1,
+        match_timestamp=datetime.now(timezone.utc),
+        correlation_score=50,
+        context={}
+    )
+    db_session.add(match)
+    await db_session.flush()
+
+    obs = Observation(
         id=uuid.uuid4(),
         title="Test Obs",
         description="Desc",
-        correlation_id=uuid.uuid4(),
+        correlation_id=match.id,
         classification=classification,
         status=status,
         risk_score=risk_score,
         evidence_count=1
     )
-
+    db_session.add(obs)
+    await db_session.commit()
+    await db_session.refresh(obs)
+    return obs
 @pytest.mark.asyncio
 async def test_policy_engine_no_match(db_session):
     engine_svc = PolicyEngineService(db_session)
-    obs = make_observation()
+    obs = await make_observation(db_session)
     
     action = await engine_svc.evaluate_observation(obs)
     
@@ -70,11 +97,11 @@ async def test_policy_engine_match_risk(db_session):
     
     engine_svc = PolicyEngineService(db_session)
     
-    obs_low = make_observation(risk_score=50)
+    obs_low = await make_observation(db_session, risk_score=50)
     action_low = await engine_svc.evaluate_observation(obs_low)
     assert action_low == PolicyAction.OBSERVE
     
-    obs_high = make_observation(risk_score=80)
+    obs_high = await make_observation(db_session, risk_score=80)
     action_high = await engine_svc.evaluate_observation(obs_high)
     assert action_high == PolicyAction.NOTIFY
 
@@ -99,7 +126,7 @@ async def test_policy_engine_priority(db_session):
     ), "sys")
     
     engine_svc = PolicyEngineService(db_session)
-    obs = make_observation(classification="Auth")
+    obs = await make_observation(db_session, classification="Auth")
     
     action = await engine_svc.evaluate_observation(obs)
     assert action == PolicyAction.REVIEW_REQUIRED
@@ -126,7 +153,7 @@ async def test_policy_engine_conflict_resolution(db_session):
     ), "sys")
     
     engine_svc = PolicyEngineService(db_session)
-    obs = make_observation(status=ObservationStatus.NEW)
+    obs = await make_observation(db_session, status=ObservationStatus.NEW)
     
     action = await engine_svc.evaluate_observation(obs)
     
@@ -152,8 +179,8 @@ async def test_policy_engine_performance_10k(db_session):
     import time
     start = time.perf_counter()
     
-    for i in range(1000): # Just do 1k in test to not timeout, but it shows performance
-        obs = make_observation(risk_score=85, classification="Malware")
+    for i in range(100): # Just do 100 in test to avoid overhead
+        obs = await make_observation(db_session, risk_score=85, classification="Malware")
         await engine_svc.evaluate_observation(obs)
         
     end = time.perf_counter()

@@ -513,7 +513,9 @@ async def test_api_automation_and_users_gaps(override_get_db, client, admin_head
     
     # --- Policies API 65, 80, 83-86 ---
     from models.policy import Policy
-    base_pol = Policy(name="conflict_pol", action="ALLOW", priority=10, is_active=True, condition_classification="TEST")
+    from models.observation import PolicyAction
+    base_pol_name = f"conflict_pol_{uuid.uuid4()}"
+    base_pol = Policy(name=base_pol_name, description="Test Desc", action=PolicyAction.OBSERVE, priority=10, is_active=True, condition_classification="TEST")
     db_session.add(base_pol)
     await db_session.commit()
     await db_session.refresh(base_pol)
@@ -521,7 +523,7 @@ async def test_api_automation_and_users_gaps(override_get_db, client, admin_head
     resp = await client.post(
         "/api/v1/policies",
         headers=admin_headers,
-        json={"name": "conflict_pol", "action": "ALLOW", "priority": 10}
+        json={"name": base_pol_name, "description": "Test Desc", "action": "OBSERVE", "priority": 10}
     )
     assert resp.status_code == 400
     
@@ -532,7 +534,8 @@ async def test_api_automation_and_users_gaps(override_get_db, client, admin_head
     )
     assert resp.status_code == 404
     
-    other_pol = Policy(name="other_pol", action="ALLOW", priority=10, is_active=True, condition_classification="TEST")
+    other_pol_name = f"other_pol_{uuid.uuid4()}"
+    other_pol = Policy(name=other_pol_name, description="Test Desc", action=PolicyAction.OBSERVE, priority=10, is_active=True, condition_classification="TEST")
     db_session.add(other_pol)
     await db_session.commit()
     await db_session.refresh(other_pol)
@@ -540,7 +543,7 @@ async def test_api_automation_and_users_gaps(override_get_db, client, admin_head
     resp = await client.put(
         f"/api/v1/policies/{other_pol.id}",
         headers=admin_headers,
-        json={"name": "conflict_pol"}
+        json={"name": base_pol_name}
     )
     assert resp.status_code == 400
     
