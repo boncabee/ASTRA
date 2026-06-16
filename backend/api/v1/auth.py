@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -10,11 +10,14 @@ from core.security import verify_password, create_access_token
 from models.user import User, UserRole
 from api.deps import get_current_user
 from core.rbac import RequireRoles
+from api.middleware.rate_limit import limiter
 
 router = APIRouter()
 
 @router.post("/login")
+@limiter.limit("5/minute")
 async def login(
+    request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[AsyncSession, Depends(get_db)]
 ):

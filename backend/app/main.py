@@ -11,6 +11,9 @@ from api.v1.responders import router as responders_router
 from core.config import settings
 from core.rbac import enforce_deny_by_default
 from api.middleware.logging import LogAndTraceMiddleware
+from api.middleware.rate_limit import limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
 
 from contextlib import asynccontextmanager
 
@@ -29,6 +32,10 @@ def create_app() -> FastAPI:
         dependencies=[Depends(enforce_deny_by_default)],
         lifespan=lifespan
     )
+
+    # Rate Limiting
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
     # CORS Middleware
     app.add_middleware(
