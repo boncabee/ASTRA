@@ -1,8 +1,7 @@
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column
 import uuid
-from sqlalchemy import Column, String, Boolean, Integer, JSON, ForeignKey, DateTime, Index
-from sqlalchemy.dialects.postgresql import UUID as PGUUID # if postgres is targeted later, but we use string/UUID
+from sqlalchemy import String, Boolean, Integer, JSON, ForeignKey, DateTime, Index
 from sqlalchemy.types import Uuid
 from core.database import Base
 from models.mixins import AuditMixin

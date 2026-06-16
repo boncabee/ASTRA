@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.correlation import CorrelationMatch
 from models.observation import Observation, ObservationStatus
-from schemas.observation import ObservationCreate, ObservationUpdate
+from schemas.observation import ObservationCreate
 from repositories.observation import ObservationRepository
 
 logger = logging.getLogger("observation_engine")

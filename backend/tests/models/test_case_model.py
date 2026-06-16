@@ -1,5 +1,4 @@
 """Tests for Case domain models — instantiation, enums, defaults."""
-import pytest
 import uuid
 from models.case import (
     Case, CaseTimeline, CaseAssignment,

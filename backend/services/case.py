@@ -11,7 +11,7 @@ from typing import List, Optional, Tuple
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.case import Case, CaseStatus, TimelineEventType, CaseEvidenceLink
+from models.case import Case, CaseStatus, CasePriority, CaseSeverity, TimelineEventType, CaseEvidenceLink
 from repositories.case import CaseRepository
 from repositories.case_assignment import CaseAssignmentRepository
 from repositories.evidence import AuditRepository, EvidenceRepository
@@ -147,6 +147,8 @@ class CaseService:
             raise ValueError(f"Case {case_id} not found")
 
         current_status = case.status
+        if current_status is None:
+            raise ValueError(f"Case {case_id} has no status")
 
         # Validate state machine transition
         if not case_state_machine.validate_transition(current_status, new_status):
@@ -213,8 +215,8 @@ class CaseService:
         skip: int = 0,
         limit: int = 50,
         status: Optional[CaseStatus] = None,
-        priority: Optional[str] = None,
-        severity: Optional[str] = None,
+        priority: Optional[CasePriority] = None,
+        severity: Optional[CaseSeverity] = None,
         assigned_to: Optional[str] = None,
     ) -> Tuple[List[Case], int]:
         """List cases with optional filters and pagination."""
@@ -233,8 +235,8 @@ class CaseService:
         if not case:
             raise ValueError(f"Case {case_id} not found")
 
-        old_values = {}
-        new_values = {}
+        old_values: dict = {}
+        new_values: dict = {}
 
         if data.title is not None:
             old_values["title"] = case.title
@@ -247,14 +249,16 @@ class CaseService:
             new_values["description"] = data.description
 
         if data.priority is not None:
-            old_values["priority"] = case.priority.value if hasattr(case.priority, 'value') else str(case.priority)
-            case.priority = data.priority
-            new_values["priority"] = data.priority.value
+            priority = data.priority
+            old_values["priority"] = getattr(case.priority, 'value', str(case.priority))
+            case.priority = priority
+            new_values["priority"] = getattr(priority, 'value', str(priority))
 
         if data.severity is not None:
-            old_values["severity"] = case.severity.value if hasattr(case.severity, 'value') else str(case.severity)
-            case.severity = data.severity
-            new_values["severity"] = data.severity.value
+            severity = data.severity
+            old_values["severity"] = getattr(case.severity, 'value', str(case.severity))
+            case.severity = severity
+            new_values["severity"] = getattr(severity, 'value', str(severity))
 
         case = await self.case_repo.update(case)
 

@@ -1,7 +1,7 @@
 """Tests for CaseRepository — CRUD, filtering, assignment, status changes."""
 import pytest
 import uuid
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 from models.case import Case, CaseStatus, CasePriority, CaseSeverity
 from repositories.case import CaseRepository
 from schemas.case import CaseCreate
@@ -121,7 +121,7 @@ async def test_list_with_all_filters(repo, mock_session):
 @pytest.mark.asyncio
 async def test_update(repo, mock_session):
     case = Case(id=uuid.uuid4(), title="Updated")
-    result = await repo.update(case)
+    await repo.update(case)
     mock_session.add.assert_called_once_with(case)
     mock_session.commit.assert_called_once()
     mock_session.refresh.assert_called_once_with(case)
@@ -130,7 +130,7 @@ async def test_update(repo, mock_session):
 @pytest.mark.asyncio
 async def test_assign(repo, mock_session):
     case = Case(id=uuid.uuid4(), title="Assign Test", assigned_to=None)
-    result = await repo.assign(case, "analyst-1")
+    await repo.assign(case, "analyst-1")
     assert case.assigned_to == "analyst-1"
     mock_session.add.assert_called_once()
     mock_session.commit.assert_called_once()
@@ -139,7 +139,7 @@ async def test_assign(repo, mock_session):
 @pytest.mark.asyncio
 async def test_change_status(repo, mock_session):
     case = Case(id=uuid.uuid4(), title="Status Test", status=CaseStatus.DRAFT)
-    result = await repo.change_status(case, CaseStatus.OPEN)
+    await repo.change_status(case, CaseStatus.OPEN)
     assert case.status == CaseStatus.OPEN
     mock_session.add.assert_called_once()
     mock_session.commit.assert_called_once()

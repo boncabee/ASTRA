@@ -2,14 +2,11 @@ from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
-from datetime import datetime, timezone, timedelta
 from httpx import AsyncClient
 
 from core.security import create_access_token
 from core.database import Base, get_db
-from core.security import get_password_hash
 from models.user import User, UserRole
-from schemas.correlation import CorrelationMatchResponse, CorrelationRuleResponse
 from app.main import app
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 

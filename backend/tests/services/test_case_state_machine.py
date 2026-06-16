@@ -1,5 +1,4 @@
 """Tests for the Case State Machine — transition validation, terminal states, role gating."""
-import pytest
 from models.case import CaseStatus
 from services.case_state_machine import (
     validate_transition,

@@ -150,7 +150,7 @@ async def test_gap_report_service_with_obs(override_get_db, db_session, admin_us
 
 @pytest.mark.asyncio
 async def test_gap_correlation_service():
-    from services.correlation import extract_nested_value, evaluate_condition, run_correlation_cycle
+    from services.correlation import extract_nested_value, run_correlation_cycle
     from models.correlation import CorrelationRule
     from app.schemas.ces import CESEvent, SourceType, Severity, Entity
     import uuid

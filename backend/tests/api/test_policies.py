@@ -1,7 +1,6 @@
 from core.config import settings
 import pytest
 import pytest_asyncio
-import uuid
 from httpx import AsyncClient
 
 from core.security import create_access_token

@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional
 from fastapi import Request, HTTPException, Depends
 from core.logging import logger
 from models.user import User, UserRole

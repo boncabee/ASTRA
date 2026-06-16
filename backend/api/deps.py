@@ -1,4 +1,5 @@
 from typing import Annotated
+import uuid
 # pyrefly: ignore [missing-import]
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -11,8 +12,6 @@ from core.database import get_db
 from models.user import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
-
-import uuid
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],

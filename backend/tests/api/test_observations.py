@@ -1,13 +1,14 @@
 from core.config import settings
 import pytest
 import pytest_asyncio
-import uuid
+from datetime import datetime, timezone
 from httpx import AsyncClient, ASGITransport
 
 from core.security import create_access_token
 from core.database import Base, get_db
 from models.user import User, UserRole
 from models.observation import Observation, ObservationStatus
+from models.correlation import CorrelationRule, CorrelationMatch
 from app.main import app
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
@@ -69,9 +70,6 @@ async def client():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
-
-from datetime import datetime, timezone
-from models.correlation import CorrelationRule, CorrelationMatch
 
 @pytest_asyncio.fixture
 async def mock_observation(db_session):

@@ -1,8 +1,8 @@
 import uuid
 from typing import List, Optional
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, func
+from sqlalchemy import select, and_
 
 from models.correlation import CorrelationRule, CorrelationMatch
 

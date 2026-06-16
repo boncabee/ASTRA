@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from datetime import datetime, timezone
+from datetime import datetime
 from app.parsers.fallback.fallback_mapper import FallbackMapper
 from app.parsers.fallback.fallback_event import ConfidenceLevel, FALLBACK_EVENT_TYPE
 from app.parsers.fallback.exceptions import RecoveryFailureError

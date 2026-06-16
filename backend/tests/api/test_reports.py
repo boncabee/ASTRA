@@ -3,7 +3,6 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from datetime import datetime, timezone, timedelta
-import uuid
 
 from core.security import create_access_token
 from core.database import Base, get_db

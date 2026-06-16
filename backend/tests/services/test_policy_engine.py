@@ -6,8 +6,8 @@ from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from core.database import Base
-from models.policy import Policy, PolicyEvaluation
 from models.observation import Observation, ObservationStatus, PolicyAction
+from models.correlation import CorrelationRule, CorrelationMatch
 from schemas.policy import PolicyCreate
 from repositories.policy import PolicyRepository
 from services.policy_engine import PolicyEngineService
@@ -29,8 +29,6 @@ async def db_session():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
-
-from models.correlation import CorrelationRule, CorrelationMatch
 
 async def make_observation(db_session, risk_score=50, classification="Auth", status=ObservationStatus.NEW):
     rule = CorrelationRule(
@@ -136,7 +134,7 @@ async def test_policy_engine_conflict_resolution(db_session):
     repo = PolicyRepository(db_session)
     
     # Same priority, same conditions. ID order will break the tie.
-    p1 = await repo.create(PolicyCreate(
+    await repo.create(PolicyCreate(
         name="Conflict 1",
         description="C1",
         action=PolicyAction.NOTIFY,
@@ -144,7 +142,7 @@ async def test_policy_engine_conflict_resolution(db_session):
         condition_status=ObservationStatus.NEW
     ), "sys")
     
-    p2 = await repo.create(PolicyCreate(
+    await repo.create(PolicyCreate(
         name="Conflict 2",
         description="C2",
         action=PolicyAction.FUTURE_MITIGATION,
@@ -155,7 +153,7 @@ async def test_policy_engine_conflict_resolution(db_session):
     engine_svc = PolicyEngineService(db_session)
     obs = await make_observation(db_session, status=ObservationStatus.NEW)
     
-    action = await engine_svc.evaluate_observation(obs)
+    await engine_svc.evaluate_observation(obs)
     
     # Check that we handled conflict deterministically
     evals, _ = await repo.list_evaluations()

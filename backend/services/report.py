@@ -1,14 +1,12 @@
-from typing import List, Dict, Any, Optional
+from typing import Dict
 import time
-from uuid import UUID
-from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from models.evidence import Evidence, AuditEvent
 from repositories.report import ReportRepository
 from repositories.observation import ObservationRepository
 from schemas.report import ReportGenerateRequest, ReportCreate, ComplianceMappingCreate
-from models.report import Report, ReportType
+from models.report import Report
 from core.logging import logger
 
 class ReportService:

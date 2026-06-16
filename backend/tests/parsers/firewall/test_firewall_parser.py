@@ -1,9 +1,8 @@
 import pytest
 import json
 from app.schemas.parser import RawLog
-from app.schemas.ces import SourceType, Severity, ArtifactType
+from app.schemas.ces import Severity, ArtifactType
 from app.parsers.firewall.firewall_parser import FirewallParser
-import app.parsers.firewall  # Ensures registration
 from app.parsers.registry.registry import registry
 from app.parsers.batch.batch_processor import BatchProcessor
 

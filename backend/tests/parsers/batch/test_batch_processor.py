@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import patch, MagicMock
 
 from app.schemas.parser import RawLog
 from app.schemas.ces import CESEvent, SourceType, Severity

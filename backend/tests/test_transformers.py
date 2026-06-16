@@ -1,7 +1,7 @@
 import pytest
 from app.transformers.base import BaseTransformer
 from app.transformers.exceptions import TransformationError, EventValidationError
-from app.schemas.ces import SourceType, Severity, ArtifactType, Entity, Artifact
+from app.schemas.ces import SourceType, Severity, Entity
 
 class ValidDummyTransformer(BaseTransformer):
     def parse(self, raw_event):

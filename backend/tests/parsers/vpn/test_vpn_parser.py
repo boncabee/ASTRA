@@ -1,9 +1,8 @@
 import pytest
 import json
 from app.schemas.parser import RawLog
-from app.schemas.ces import SourceType, Severity, ArtifactType
+from app.schemas.ces import Severity, ArtifactType
 from app.parsers.vpn.vpn_parser import VPNParser
-import app.parsers.vpn  # ensures the parser is registered in __init__.py
 from app.parsers.registry.registry import registry
 from app.parsers.batch.batch_processor import BatchProcessor
 

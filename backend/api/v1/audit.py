@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from core.rbac import RequireRoles
 from models.user import UserRole
-from schemas.evidence import AuditEventResponse, DecisionProvenanceResponse
+from schemas.evidence import AuditEventResponse
 from repositories.evidence import AuditRepository
 from services.audit_engine import AuditEngineService
 from core.logging import logger

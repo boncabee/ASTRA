@@ -2,13 +2,13 @@ from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy import inspect, text
 
 from core.database import Base
-from models.policy import Policy, PolicyEvaluation
-from models.observation import PolicyAction
+from models.policy import PolicyEvaluation
+from models.observation import Observation, ObservationStatus, PolicyAction
+from models.correlation import CorrelationRule, CorrelationMatch
 from schemas.policy import PolicyCreate
 from repositories.policy import PolicyRepository
 
@@ -85,9 +85,6 @@ async def test_get_active_policies(db_session):
     # Should be ordered by priority DESC
     names = [p.name for p in active_policies if p.name in ("P1", "P2", "P3")]
     assert names == ["P2", "P1"]
-
-from models.observation import Observation, ObservationStatus
-from models.correlation import CorrelationRule, CorrelationMatch
 
 async def make_observation(db_session):
     rule = CorrelationRule(

@@ -4,11 +4,11 @@ import pytest_asyncio
 import uuid
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy import inspect, text
+from sqlalchemy import text
 
 from core.database import Base
 from crud.crud_correlation import correlation_crud
-from models.correlation import CorrelationRule, CorrelationMatch
+from models.correlation import CorrelationMatch
 
 @pytest_asyncio.fixture(scope="session")
 def anyio_backend():

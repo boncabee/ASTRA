@@ -3,7 +3,7 @@ from pydantic import ValidationError
 from unittest.mock import patch
 from typing import Dict, Any
 from app.schemas.ces import CESEvent, SourceType, Severity, Entity
-from app.core.versioning import SchemaVersionError, migrate_to_latest, DEPRECATED_FIELDS_BY_VERSION
+from app.core.versioning import migrate_to_latest, DEPRECATED_FIELDS_BY_VERSION
 
 def get_base_payload() -> Dict[str, Any]:
     return {

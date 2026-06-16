@@ -107,7 +107,7 @@ class CaseRepository:
     async def get_evidence_links(self, case_id: UUID) -> List[CaseEvidenceLink]:
         query = select(CaseEvidenceLink).where(
             CaseEvidenceLink.case_id == case_id,
-            CaseEvidenceLink.is_active == True
+            CaseEvidenceLink.is_active.is_(True)
         )
         result = await self.session.execute(query)
         return list(result.scalars().all())

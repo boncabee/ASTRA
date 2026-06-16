@@ -3,7 +3,7 @@ from typing import Any
 from sqlalchemy.orm import Mapped, mapped_column
 import uuid
 import enum
-from sqlalchemy import Column, String, ForeignKey, Enum as SQLEnum, Index, DateTime, JSON
+from sqlalchemy import String, ForeignKey, Enum as SQLEnum, Index, DateTime, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Uuid
 from sqlalchemy.sql import func

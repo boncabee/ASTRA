@@ -9,7 +9,6 @@ from core.rbac import RequireRoles
 from models.user import UserRole
 from schemas.evidence import EvidenceResponse
 from repositories.evidence import EvidenceRepository
-from core.logging import logger
 
 router = APIRouter()
 

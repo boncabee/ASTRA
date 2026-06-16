@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 from sqlalchemy.orm import Mapped, mapped_column
 import uuid
-from sqlalchemy import Column, String, Integer, ForeignKey, Boolean, Enum as SQLEnum, Index, DateTime
+from sqlalchemy import String, Integer, ForeignKey, Boolean, Enum as SQLEnum, Index, DateTime
 from sqlalchemy.types import Uuid
 from sqlalchemy.sql import func
 from core.database import Base

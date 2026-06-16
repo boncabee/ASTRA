@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List
 import time
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.observation import Observation, PolicyAction

@@ -1,6 +1,5 @@
 import pytest
 import json
-from pydantic import ValidationError
 
 from app.parsers.base.transformer_config import (
     TransformerConfig,

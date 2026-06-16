@@ -3,13 +3,13 @@ import pytest
 import pytest_asyncio
 import asyncio
 from httpx import AsyncClient, ASGITransport
-from datetime import datetime, timezone, timedelta
-import uuid
 import time
 
 from core.security import create_access_token
 from core.database import Base, get_db
 from models.user import User, UserRole
+from models.policy import Policy
+from models.observation import PolicyAction
 from app.main import app
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
@@ -72,9 +72,6 @@ async def client():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
-
-from models.policy import Policy
-from models.observation import PolicyAction
 
 @pytest_asyncio.fixture
 async def mock_policy(db_session):

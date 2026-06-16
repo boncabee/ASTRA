@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, or_
+from sqlalchemy import select, and_
 from sqlalchemy.sql.expression import func
 from models.observation import Observation, ObservationStatus
 from schemas.observation import ObservationCreate

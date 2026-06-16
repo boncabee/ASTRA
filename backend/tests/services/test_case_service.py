@@ -1,7 +1,7 @@
 """Tests for CaseService — create, assign, change_status, update with audit + timeline."""
 import pytest
 import uuid
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock
 from models.case import Case, CaseStatus, CasePriority, CaseSeverity, TimelineEventType
 from services.case import CaseService
 from schemas.case import CaseCreate, CaseUpdate
@@ -119,7 +119,7 @@ class TestAssignCase:
         monkeypatch.setattr(service.timeline_service, "record_event", AsyncMock())
         monkeypatch.setattr(service.audit_repo, "create_event", AsyncMock())
 
-        result = await service.assign_case(mock_case.id, "analyst-1", "manager-1")
+        await service.assign_case(mock_case.id, "analyst-1", "manager-1")
 
         service.case_repo.assign.assert_called_once()
         service.assignment_repo.create.assert_called_once()
@@ -170,7 +170,7 @@ class TestChangeStatus:
         monkeypatch.setattr(service.timeline_service, "record_event", AsyncMock())
         monkeypatch.setattr(service.audit_repo, "create_event", AsyncMock())
 
-        result = await service.change_status(
+        await service.change_status(
             mock_case.id, CaseStatus.OPEN, actor="user1", actor_role="SOC_ANALYST"
         )
 
@@ -213,7 +213,7 @@ class TestChangeStatus:
         monkeypatch.setattr(service.timeline_service, "record_event", AsyncMock())
         monkeypatch.setattr(service.audit_repo, "create_event", AsyncMock())
 
-        result = await service.change_status(
+        await service.change_status(
             mock_resolved_case.id, CaseStatus.CLOSED,
             actor="manager1", actor_role="Security Engineer",
         )
@@ -238,7 +238,7 @@ class TestChangeStatus:
         monkeypatch.setattr(service.timeline_service, "record_event", AsyncMock())
         monkeypatch.setattr(service.audit_repo, "create_event", AsyncMock())
 
-        result = await service.change_status(
+        await service.change_status(
             mock_case.id, CaseStatus.CANCELLED,
             actor="responder1", actor_role="Incident Responder",
         )
@@ -302,7 +302,7 @@ class TestUpdateCase:
         monkeypatch.setattr(service.audit_repo, "create_event", AsyncMock())
 
         data = CaseUpdate(title="Updated Title")
-        result = await service.update_case(mock_case.id, data, actor="user1")
+        await service.update_case(mock_case.id, data, actor="user1")
 
         service.case_repo.update.assert_called_once()
         service.audit_repo.create_event.assert_called_once()

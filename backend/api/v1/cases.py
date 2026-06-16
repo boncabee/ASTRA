@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.deps import get_db, get_current_user
+from api.deps import get_db
 from core.rbac import RequireRoles
 from models.user import User, UserRole
 from models.case import CaseStatus, CasePriority, CaseSeverity
@@ -14,7 +14,6 @@ from schemas.case import (
     CaseStatusChange,
     CaseAssignRequest,
     CaseTimelineResponse,
-    CaseAssignmentResponse,
     CaseEvidenceLinkCreate,
     CaseEvidenceLinkResponse,
 )
@@ -120,12 +119,13 @@ async def change_status(
 ):
     """Change the status of a case."""
     service = CaseService(db)
+    assert current_user.role is not None, "User role cannot be None"
     try:
         return await service.change_status(
             case_id, 
             data.new_status, 
             actor=current_user.username, 
-            actor_role=current_user.role, 
+            actor_role=current_user.role.value, 
             reason=data.reason
         )
     except ValueError as e:

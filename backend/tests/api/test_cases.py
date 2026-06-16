@@ -1,13 +1,12 @@
 from core.config import settings
 import pytest
 import pytest_asyncio
-import uuid
 from httpx import AsyncClient, ASGITransport
 
 from core.security import create_access_token
 from core.database import Base, get_db
 from models.user import User, UserRole
-from models.case import Case, CaseStatus, CasePriority, CaseSeverity, CaseEvidenceLink
+from models.case import Case, CaseStatus, CasePriority, CaseSeverity
 from models.evidence import Evidence, EvidenceType
 from app.main import app
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker

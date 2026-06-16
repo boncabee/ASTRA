@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from app.core.versioning import validate_schema_version, check_deprecated_fields
 from datetime import datetime
 import re
-from uuid import UUID
 from enum import Enum
 
 MAX_RAW_EVENT_SIZE = 65536

@@ -50,7 +50,7 @@ class PolicyRepository:
         return list(result.scalars().all()), total
         
     async def get_active_policies(self) -> List[Policy]:
-        query = select(Policy).where(Policy.is_active == True).order_by(Policy.priority.desc(), Policy.id.asc())
+        query = select(Policy).where(Policy.is_active.is_(True)).order_by(Policy.priority.desc(), Policy.id.asc())
         result = await self.session.execute(query)
         return list(result.scalars().all())
 

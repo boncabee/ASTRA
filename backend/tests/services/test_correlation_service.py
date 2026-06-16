@@ -1,11 +1,10 @@
-import pytest
 import uuid
 from datetime import datetime, timezone, timedelta
 import json
 import logging
 
-from app.schemas.ces import CESEvent, SourceType, Severity, Entity, EventCategory
-from models.correlation import CorrelationRule, CorrelationMatch
+from app.schemas.ces import CESEvent, SourceType, Severity, Entity
+from models.correlation import CorrelationRule
 from services.correlation import run_correlation_cycle
 
 def create_mock_event(event_type: str, timestamp: str, actor_username: str | None = None) -> CESEvent:

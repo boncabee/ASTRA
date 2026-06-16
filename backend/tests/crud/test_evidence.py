@@ -2,10 +2,12 @@ from core.config import settings
 import pytest
 import pytest_asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from core.database import Base
+from models.observation import Observation, ObservationStatus
+from models.correlation import CorrelationRule, CorrelationMatch
 from models.evidence import EvidenceType
 from schemas.evidence import EvidenceCreate, AuditEventCreate
 from repositories.evidence import EvidenceRepository, AuditRepository
@@ -27,10 +29,6 @@ async def db_session():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
-
-from models.observation import Observation, ObservationStatus
-from models.correlation import CorrelationRule, CorrelationMatch
-from datetime import timezone
 
 async def make_observation(db_session):
     rule = CorrelationRule(

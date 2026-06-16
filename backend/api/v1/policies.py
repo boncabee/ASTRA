@@ -1,5 +1,5 @@
 import uuid
-from typing import Annotated, List, Dict, Any, Optional
+from typing import Annotated, Dict, Any
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -85,15 +85,23 @@ async def update_policy(
             return error_response("Policy with this name already exists", 400)
         policy.name = policy_in.name
         
-    if policy_in.description is not None: policy.description = policy_in.description
-    if policy_in.action is not None: policy.action = policy_in.action
-    if policy_in.priority is not None: policy.priority = policy_in.priority
-    if policy_in.is_active is not None: policy.is_active = policy_in.is_active
-    
-    if policy_in.condition_risk_min is not None: policy.condition_risk_min = policy_in.condition_risk_min
-    if policy_in.condition_risk_max is not None: policy.condition_risk_max = policy_in.condition_risk_max
-    if policy_in.condition_classification is not None: policy.condition_classification = policy_in.condition_classification
-    if policy_in.condition_status is not None: policy.condition_status = policy_in.condition_status
+    if policy_in.description is not None:
+        policy.description = policy_in.description
+    if policy_in.action is not None:
+        policy.action = policy_in.action
+    if policy_in.priority is not None:
+        policy.priority = policy_in.priority
+    if policy_in.is_active is not None:
+        policy.is_active = policy_in.is_active
+
+    if policy_in.condition_risk_min is not None:
+        policy.condition_risk_min = policy_in.condition_risk_min
+    if policy_in.condition_risk_max is not None:
+        policy.condition_risk_max = policy_in.condition_risk_max
+    if policy_in.condition_classification is not None:
+        policy.condition_classification = policy_in.condition_classification
+    if policy_in.condition_status is not None:
+        policy.condition_status = policy_in.condition_status
 
     policy.updated_by = str(current_user.id)
     updated_policy = await repo.update(policy)

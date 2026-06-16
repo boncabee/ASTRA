@@ -2,7 +2,7 @@ from typing import Any
 from sqlalchemy.orm import Mapped, mapped_column
 import uuid
 import enum
-from sqlalchemy import Column, String, Integer, ForeignKey, Enum as SQLEnum, Index
+from sqlalchemy import String, Integer, ForeignKey, Enum as SQLEnum, Index
 from sqlalchemy.types import Uuid
 from core.database import Base
 from models.mixins import AuditMixin
