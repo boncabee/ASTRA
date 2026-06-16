@@ -7,7 +7,7 @@ RUN npm ci
 
 COPY . .
 
-RUN addgroup --system astra && adduser --system --group astra && chown -R astra:astra /app
+RUN addgroup -S astra && adduser -S astra -G astra && chown -R astra:astra /app
 USER astra
 
 RUN npm run build
