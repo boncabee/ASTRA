@@ -8,6 +8,8 @@ from api.v1.security import router as security_router
 from api.v1.responders import router as responders_router
 from core.config import settings
 from core.rbac import enforce_deny_by_default
+from api.middleware.logging import LogAndTraceMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from contextlib import asynccontextmanager
 
@@ -35,6 +37,14 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Logging Middleware
+    app.add_middleware(LogAndTraceMiddleware)
+    
+    # Prometheus Metrics
+    import sys
+    if "pytest" not in sys.modules:
+        Instrumentator().instrument(app).expose(app)
 
     # Include routers
     app.include_router(health_router, prefix="/api/v1")
