@@ -11,13 +11,12 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from core.config import settings
 from core.database import Base
-from models.automation import AutomationAction, AutomationState
+from models.automation import AutomationAction
 from models.policy import Policy
 from models.case import Case, CaseStatus, CasePriority, CaseSeverity, TimelineEventType
 from models.observation import Observation, ObservationStatus, PolicyAction
 from models.correlation import CorrelationRule, CorrelationMatch
-from models.evidence import AuditEvent
-from models.report import Report, ReportType
+
 from schemas.automation import AutomationRequestCreate
 from schemas.evidence import AuditEventCreate
 from repositories.automation import AutomationRepository
