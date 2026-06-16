@@ -1,5 +1,7 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from api.middleware.metrics import PrometheusMiddleware
 from api.v1.health import router as health_router
 from api.v1.auth import router as auth_router
 from api.v1.users import router as users_router
@@ -9,7 +11,6 @@ from api.v1.responders import router as responders_router
 from core.config import settings
 from core.rbac import enforce_deny_by_default
 from api.middleware.logging import LogAndTraceMiddleware
-from prometheus_fastapi_instrumentator import Instrumentator
 
 from contextlib import asynccontextmanager
 
@@ -41,10 +42,14 @@ def create_app() -> FastAPI:
     # Logging Middleware
     app.add_middleware(LogAndTraceMiddleware)
     
-    # Prometheus Metrics
+    # Prometheus Metrics Middleware
     import sys
     if "pytest" not in sys.modules:
-        Instrumentator().instrument(app).expose(app)
+        app.add_middleware(PrometheusMiddleware)
+
+        @app.get("/metrics", tags=["metrics"])
+        def get_metrics():
+            return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
     # Include routers
     app.include_router(health_router, prefix="/api/v1")
