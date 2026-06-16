@@ -3,7 +3,7 @@ from typing import Any
 from sqlalchemy.orm import Mapped, mapped_column
 import uuid
 import enum
-from sqlalchemy import String, Text, ForeignKey, Enum as SQLEnum, Index, DateTime, JSON
+from sqlalchemy import String, Text, ForeignKey, Enum as SQLEnum, Index, DateTime, JSON, UniqueConstraint, Boolean
 from sqlalchemy.types import Uuid
 from sqlalchemy.sql import func
 from core.database import Base
@@ -100,3 +100,22 @@ class CaseAssignment(Base):
     assigned_user_id: Mapped[str] = mapped_column(String, nullable=False)
     assigned_by: Mapped[str] = mapped_column(String, nullable=False)
     assigned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class CaseEvidenceLink(Base):
+    """Junction table linking Cases to Evidence with soft-unlink capability."""
+    __tablename__ = "case_evidence_links"
+
+    __table_args__ = (
+        Index("ix_case_evidence_case_id", "case_id"),
+        Index("ix_case_evidence_evidence_id", "evidence_id"),
+        UniqueConstraint("case_id", "evidence_id", name="uq_case_evidence_link"),
+    )
+
+    id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    case_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), ForeignKey("cases.id"), nullable=False)
+    evidence_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), ForeignKey("evidence.id"), nullable=False)
+    created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_by: Mapped[str] = mapped_column(String, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+

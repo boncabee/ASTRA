@@ -384,3 +384,87 @@ class TestUpdateCase:
         assert "priority" in audit_call.new_value
         assert "severity" in audit_call.new_value
 
+
+@pytest.mark.asyncio
+async def test_link_evidence(service, mock_case, monkeypatch):
+    from models.case import CaseEvidenceLink
+    from models.evidence import Evidence
+    
+    evidence_id = uuid.uuid4()
+    mock_evidence = Evidence(id=evidence_id)
+    mock_link = CaseEvidenceLink(id=uuid.uuid4(), case_id=mock_case.id, evidence_id=evidence_id)
+
+    monkeypatch.setattr(service.case_repo, "get_by_id", AsyncMock(return_value=mock_case))
+    monkeypatch.setattr(service.evidence_repo, "get_evidence_by_id", AsyncMock(return_value=mock_evidence))
+    monkeypatch.setattr(service.case_repo, "link_evidence", AsyncMock(return_value=mock_link))
+    monkeypatch.setattr(service.timeline_service, "record_event", AsyncMock())
+    monkeypatch.setattr(service.audit_repo, "create_event", AsyncMock())
+
+    link = await service.link_evidence(mock_case.id, evidence_id, "user1")
+    
+    assert link == mock_link
+    service.timeline_service.record_event.assert_called_once()
+    service.audit_repo.create_event.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_link_evidence_case_not_found(service, monkeypatch):
+    monkeypatch.setattr(service.case_repo, "get_by_id", AsyncMock(return_value=None))
+    with pytest.raises(ValueError, match="Case .* not found"):
+        await service.link_evidence(uuid.uuid4(), uuid.uuid4(), "user1")
+
+@pytest.mark.asyncio
+async def test_link_evidence_evidence_not_found(service, mock_case, monkeypatch):
+    monkeypatch.setattr(service.case_repo, "get_by_id", AsyncMock(return_value=mock_case))
+    monkeypatch.setattr(service.evidence_repo, "get_evidence_by_id", AsyncMock(return_value=None))
+    with pytest.raises(ValueError, match="Evidence .* not found"):
+        await service.link_evidence(mock_case.id, uuid.uuid4(), "user1")
+
+@pytest.mark.asyncio
+async def test_get_evidence_links(service, monkeypatch):
+    monkeypatch.setattr(service.case_repo, "get_evidence_links", AsyncMock(return_value=[]))
+    links = await service.get_evidence_links(uuid.uuid4())
+    assert links == []
+
+@pytest.mark.asyncio
+async def test_soft_unlink_evidence(service, mock_case, monkeypatch):
+    from models.case import CaseEvidenceLink
+    evidence_id = uuid.uuid4()
+    link_id = uuid.uuid4()
+    mock_link = CaseEvidenceLink(id=link_id, case_id=mock_case.id, evidence_id=evidence_id)
+
+    monkeypatch.setattr(service.case_repo, "get_by_id", AsyncMock(return_value=mock_case))
+    monkeypatch.setattr(service.case_repo, "soft_unlink_evidence", AsyncMock(return_value=mock_link))
+    monkeypatch.setattr(service.timeline_service, "record_event", AsyncMock())
+    monkeypatch.setattr(service.audit_repo, "create_event", AsyncMock())
+
+    link = await service.soft_unlink_evidence(mock_case.id, link_id, "user1")
+    
+    assert link == mock_link
+    service.timeline_service.record_event.assert_called_once()
+    service.audit_repo.create_event.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_soft_unlink_evidence_wrong_case(service, mock_case, monkeypatch):
+    from models.case import CaseEvidenceLink
+    mock_link = CaseEvidenceLink(id=uuid.uuid4(), case_id=uuid.uuid4(), evidence_id=uuid.uuid4())
+
+    monkeypatch.setattr(service.case_repo, "get_by_id", AsyncMock(return_value=mock_case))
+    monkeypatch.setattr(service.case_repo, "soft_unlink_evidence", AsyncMock(return_value=mock_link))
+
+    with pytest.raises(ValueError, match="does not belong to Case"):
+        await service.soft_unlink_evidence(mock_case.id, mock_link.id, "user1")
+
+@pytest.mark.asyncio
+async def test_soft_unlink_evidence_case_not_found(service, monkeypatch):
+    monkeypatch.setattr(service.case_repo, "get_by_id", AsyncMock(return_value=None))
+    with pytest.raises(ValueError, match="Case .* not found"):
+        await service.soft_unlink_evidence(uuid.uuid4(), uuid.uuid4(), "user1")
+
+@pytest.mark.asyncio
+async def test_soft_unlink_evidence_link_not_found(service, mock_case, monkeypatch):
+    monkeypatch.setattr(service.case_repo, "get_by_id", AsyncMock(return_value=mock_case))
+    monkeypatch.setattr(service.case_repo, "soft_unlink_evidence", AsyncMock(return_value=None))
+    result = await service.soft_unlink_evidence(mock_case.id, uuid.uuid4(), "user1")
+    assert result is None
+
+

@@ -62,3 +62,19 @@ class CaseAssignmentResponse(BaseModel):
     assigned_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class CaseEvidenceLinkCreate(BaseModel):
+    evidence_id: UUID
+
+
+class CaseEvidenceLinkResponse(BaseModel):
+    id: UUID
+    case_id: UUID
+    evidence_id: UUID
+    created_at: datetime
+    created_by: str
+    is_active: bool
+
+    model_config = ConfigDict(from_attributes=True)
+

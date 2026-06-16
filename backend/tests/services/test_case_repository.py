@@ -143,3 +143,75 @@ async def test_change_status(repo, mock_session):
     assert case.status == CaseStatus.OPEN
     mock_session.add.assert_called_once()
     mock_session.commit.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_link_evidence_new(repo, mock_session):
+    # Mock existing link not found
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.first.return_value = None
+    mock_session.execute.return_value = mock_result
+
+    case_id = uuid.uuid4()
+    evidence_id = uuid.uuid4()
+
+    link = await repo.link_evidence(case_id, evidence_id, "user1")
+    assert link.case_id == case_id
+    assert link.evidence_id == evidence_id
+    assert link.created_by == "user1"
+    mock_session.add.assert_called_once()
+    mock_session.commit.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_link_evidence_reactivate(repo, mock_session):
+    from models.case import CaseEvidenceLink
+    case_id = uuid.uuid4()
+    evidence_id = uuid.uuid4()
+    existing_link = CaseEvidenceLink(id=uuid.uuid4(), case_id=case_id, evidence_id=evidence_id, is_active=False)
+
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.first.return_value = existing_link
+    mock_session.execute.return_value = mock_result
+
+    link = await repo.link_evidence(case_id, evidence_id, "user1")
+    assert link == existing_link
+    assert link.is_active is True
+    mock_session.add.assert_called_once_with(existing_link)
+    mock_session.commit.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_get_evidence_links(repo, mock_session):
+    from models.case import CaseEvidenceLink
+    link = CaseEvidenceLink(id=uuid.uuid4(), case_id=uuid.uuid4(), evidence_id=uuid.uuid4(), is_active=True)
+
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.all.return_value = [link]
+    mock_session.execute.return_value = mock_result
+
+    links = await repo.get_evidence_links(link.case_id)
+    assert len(links) == 1
+    assert links[0] == link
+
+@pytest.mark.asyncio
+async def test_soft_unlink_evidence(repo, mock_session):
+    from models.case import CaseEvidenceLink
+    link = CaseEvidenceLink(id=uuid.uuid4(), case_id=uuid.uuid4(), evidence_id=uuid.uuid4(), is_active=True)
+
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.first.return_value = link
+    mock_session.execute.return_value = mock_result
+
+    unlinked = await repo.soft_unlink_evidence(link.id)
+    assert unlinked == link
+    assert unlinked.is_active is False
+    mock_session.add.assert_called_once_with(link)
+    mock_session.commit.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_soft_unlink_evidence_not_found(repo, mock_session):
+    mock_result = MagicMock()
+    mock_result.scalars.return_value.first.return_value = None
+    mock_session.execute.return_value = mock_result
+
+    unlinked = await repo.soft_unlink_evidence(uuid.uuid4())
+    assert unlinked is None
+

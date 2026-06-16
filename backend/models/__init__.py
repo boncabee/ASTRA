@@ -7,4 +7,4 @@ from models.policy import Policy, PolicyEvaluation
 from models.evidence import Evidence, AuditEvent
 from models.report import Report, ComplianceMapping
 from models.automation import AutomationRequest, AutomationExecution
-from models.case import Case, CaseTimeline, CaseAssignment
+from models.case import Case, CaseTimeline, CaseAssignment, CaseEvidenceLink

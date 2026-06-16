@@ -65,6 +65,9 @@ def create_app() -> FastAPI:
     from api.v1.automation import router as automation_router
     app.include_router(automation_router, prefix="/api/v1/automation", tags=["automation"])
 
+    from api.v1.cases import router as cases_router
+    app.include_router(cases_router, prefix="/api/v1/cases", tags=["cases"])
+
     return app
 
 app = create_app()

@@ -11,10 +11,10 @@ from typing import List, Optional, Tuple
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.case import Case, CaseStatus, TimelineEventType
+from models.case import Case, CaseStatus, TimelineEventType, CaseEvidenceLink
 from repositories.case import CaseRepository
 from repositories.case_assignment import CaseAssignmentRepository
-from repositories.evidence import AuditRepository
+from repositories.evidence import AuditRepository, EvidenceRepository
 from schemas.case import CaseCreate, CaseUpdate
 from schemas.evidence import AuditEventCreate
 from services.case_timeline import TimelineService
@@ -29,6 +29,7 @@ class CaseService:
         self.assignment_repo = CaseAssignmentRepository(session)
         self.timeline_service = TimelineService(session)
         self.audit_repo = AuditRepository(session)
+        self.evidence_repo = EvidenceRepository(session)
 
     async def create_case(self, data: CaseCreate, created_by: str) -> Case:
         """
@@ -269,3 +270,95 @@ class CaseService:
             ))
 
         return case
+
+    async def link_evidence(self, case_id: UUID, evidence_id: UUID, actor: str) -> CaseEvidenceLink:
+        """Link evidence to a case."""
+        case = await self.case_repo.get_by_id(case_id)
+        if not case:
+            raise ValueError(f"Case {case_id} not found")
+
+        evidence = await self.evidence_repo.get_evidence_by_id(evidence_id)
+        if not evidence:
+            raise ValueError(f"Evidence {evidence_id} not found")
+
+        link = await self.case_repo.link_evidence(case_id, evidence_id, actor)
+
+        # Timeline: record evidence linking
+        await self.timeline_service.record_event(
+            case_id=case_id,
+            event_type=TimelineEventType.SYSTEM_ACTION,
+            actor=actor,
+            event_metadata={
+                "action": "evidence_linked",
+                "evidence_id": str(evidence_id),
+                "link_id": str(link.id),
+            },
+        )
+
+        # Audit: record linking
+        await self.audit_repo.create_event(AuditEventCreate(
+            entity_type="CASE_EVIDENCE_LINK",
+            entity_id=link.id,  # type: ignore[arg-type]
+            action="CREATED",
+            actor=actor,
+            old_value=None,
+            new_value={"case_id": str(case_id), "evidence_id": str(evidence_id)},
+        ))
+
+        logger.info("Evidence linked to case", extra={
+            "event": "case_evidence_linked",
+            "case_id": str(case_id),
+            "evidence_id": str(evidence_id),
+            "actor": actor,
+        })
+
+        return link
+
+    async def get_evidence_links(self, case_id: UUID) -> List[CaseEvidenceLink]:
+        """Retrieve all active evidence links for a case."""
+        return await self.case_repo.get_evidence_links(case_id)
+
+    async def soft_unlink_evidence(self, case_id: UUID, link_id: UUID, actor: str) -> Optional[CaseEvidenceLink]:
+        """Soft unlink evidence from a case."""
+        case = await self.case_repo.get_by_id(case_id)
+        if not case:
+            raise ValueError(f"Case {case_id} not found")
+
+        link = await self.case_repo.soft_unlink_evidence(link_id)
+        if not link:
+            return None
+
+        # Ensure the link belongs to the case
+        if link.case_id != case_id:
+            raise ValueError(f"Link {link_id} does not belong to Case {case_id}")
+
+        # Timeline: record evidence unlinking
+        await self.timeline_service.record_event(
+            case_id=case_id,
+            event_type=TimelineEventType.SYSTEM_ACTION,
+            actor=actor,
+            event_metadata={
+                "action": "evidence_unlinked",
+                "evidence_id": str(link.evidence_id),
+                "link_id": str(link_id),
+            },
+        )
+
+        # Audit: record unlinking
+        await self.audit_repo.create_event(AuditEventCreate(
+            entity_type="CASE_EVIDENCE_LINK",
+            entity_id=link.id,  # type: ignore[arg-type]
+            action="DELETED", # logical delete
+            actor=actor,
+            old_value={"is_active": True},
+            new_value={"is_active": False},
+        ))
+
+        logger.info("Evidence unlinked from case", extra={
+            "event": "case_evidence_unlinked",
+            "case_id": str(case_id),
+            "link_id": str(link_id),
+            "actor": actor,
+        })
+
+        return link
