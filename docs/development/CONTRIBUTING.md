@@ -81,6 +81,8 @@ Required:
 * Linked requirement
 * Tests
 * Documentation updates
+* Meet the formal Definition of Done
+* GitHub Actions Pass (Local validation alone is insufficient)
 
 ---
 
@@ -104,7 +106,7 @@ Required:
 
 Must pass:
 
-* CI
+* GitHub Actions (Source of Truth)
 * Tests
 * Secret scan
 * Code review

@@ -35,6 +35,7 @@ A Pull Request must:
 - Be reasonably sized (ideally < 500 lines of code changed, excluding generated lock files).
 - Include an updated test suite proving the code works (or fails correctly).
 - Pass all automated Quality Gates.
+- Meet the formal Definition of Done, where **GitHub Actions is the absolute Source of Truth**. Local validation alone is insufficient.
 
 ## 5. Review Standards
 - **Mandatory Approvals:** Every PR requires at least 1 approval from a peer engineer. Architectural changes require an approval from a Lead Architect.

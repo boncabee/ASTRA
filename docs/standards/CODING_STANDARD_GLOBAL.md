@@ -51,3 +51,8 @@ This document establishes the mandatory coding guidelines for the ASTRA platform
 - **Tooling:** ASTRA uses `pip` with strict `requirements.txt` locking.
 - **Locking:** Explicit versions must be defined (e.g., `fastapi==0.111.0`).
 - **Vulnerability Scanning:** No package may be added without passing a vulnerability scan.
+
+## 9. Definition of Done & CI/CD Validation
+- **Source of Truth:** GitHub Actions is the authoritative Source of Truth. Local validation alone is insufficient.
+- **Definition of Done:** A task may only be marked COMPLETE when changes are committed and pushed, GitHub Actions are executed, and all required workflows pass.
+- **Reporting:** All engineering reports must include CI Validation, Workflow Run ID, Commit SHA, and GitHub Actions Results.
