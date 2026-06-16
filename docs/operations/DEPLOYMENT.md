@@ -55,74 +55,46 @@ Live operations
 
 ```text id="sjd4n9"
 Internet
-
 ↓
-
-Load Balancer
-
+NGINX Reverse Proxy (TLS Termination)
 ↓
-
-Frontend
-
-↓
-
-API
-
-↓
-
-Worker
-
-↓
-
-PostgreSQL
+├── Frontend (Next.js)
+└── Backend (FastAPI)
+      ↓
+    PostgreSQL (Internal Network)
 ```
 
 ---
 
 # Infrastructure Stack
 
-Frontend:
+ASTRA v1 is standardized on a **Small Team (Hardened Docker Compose)** deployment model.
 
-```text id="59l6ci"
-Vercel
-```
-
-or
-
-```text id="91r43l"
-Cloud Run
-```
-
----
-
-Backend:
-
-```text id="sw18hm"
-Cloud Run
-```
-
----
-
-Database:
-
-```text id="m1w61j"
-PostgreSQL
-```
+**Proxy Layer:** NGINX with Certbot for automated Let's Encrypt TLS.
+**Frontend:** Next.js (Node.js Alpine Container)
+**Backend:** FastAPI (Python Slim Container)
+**Database:** PostgreSQL 15 (Persistent Volume)
+**Orchestrator:** Docker Compose
 
 ---
 
 # Environment Variables
 
+Production deployments require a `.env` file at the repository root. Do not commit this file.
+
 Required:
 
 ```env id="tntfns"
+DOMAIN=example.com
+NEXT_PUBLIC_API_URL=https://example.com/api/v1
+POSTGRES_USER=astra_prod
+POSTGRES_PASSWORD=secure_password
+POSTGRES_DB=astra
+DATABASE_URL=postgresql+asyncpg://astra_prod:secure_password@db:5432/astra
+JWT_SECRET_KEY=secure_32_char_string
 GEMINI_API_KEY=
-
-DATABASE_URL=
-
-PRIVACY_MODE=
-
-LOG_LEVEL=
+LOG_LEVEL=INFO
+PRIVACY_MODE=true
 ```
 
 ---
@@ -131,20 +103,21 @@ LOG_LEVEL=
 
 Step 1
 
-Run migrations.
-
-```bash id="xwy52r"
-alembic upgrade head
+Clone the repository and configure the environment variables:
+```bash id="envsetup"
+cp .env.example .env
+chmod 600 .env
+nano .env
 ```
 
 ---
 
 Step 2
 
-Start services.
+Start the production stack. The backend `entrypoint.sh` will automatically run `alembic upgrade head`.
 
 ```bash id="m0j66s"
-docker compose up
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ---
