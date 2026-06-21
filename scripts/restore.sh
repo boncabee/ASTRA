@@ -3,6 +3,9 @@ set -eo pipefail
 
 # ASTRA Restore Automation Script
 # Usage: ./scripts/restore.sh backups/astra_backup_20260616_120000.sql.gz
+#
+# Format: plain SQL compressed with gzip (produced by backup.sh)
+# Restore method: gunzip | psql  (NOT pg_restore — backup is plain SQL, not custom binary)
 
 if [ -z "$1" ]; then
   echo "Error: No backup file specified."
@@ -30,12 +33,8 @@ DB_NAME=${POSTGRES_DB:-astra}
 
 echo "Restoring ASTRA database from ${BACKUP_FILE}..."
 
-# We use pg_restore since backup.sh uses custom format (-F c)
-gunzip -c "$BACKUP_FILE" | docker compose exec -T db pg_restore -U "$DB_USER" -d "$DB_NAME" --clean --if-exists
+# Plain SQL + gzip: decompress then pipe into psql
+gunzip -c "$BACKUP_FILE" | docker compose exec -T db psql -U "$DB_USER" -d "$DB_NAME"
 
-if [ $? -eq 0 ]; then
-  echo "Restore completed successfully."
-else
-  echo "Restore failed!" >&2
-  exit 1
-fi
+echo "Restore completed successfully."
+

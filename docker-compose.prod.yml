@@ -51,6 +51,7 @@ services:
       context: ./backend
     restart: unless-stopped
     environment:
+      - ENVIRONMENT=prod
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
