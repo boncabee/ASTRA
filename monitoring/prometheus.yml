@@ -8,9 +8,7 @@ rule_files:
 alerting:
   alertmanagers:
     - static_configs:
-        - targets: []
-          # Populate with alertmanager address when alertmanager service is running:
-          # - targets: ['alertmanager:9093']
+        - targets: ['alertmanager:9093']
 
 scrape_configs:
   - job_name: astra-backend
