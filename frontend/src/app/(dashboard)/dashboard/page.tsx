@@ -1,14 +1,33 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Activity, AlertTriangle, ShieldAlert, Zap } from "lucide-react"
-import { mockHealth, mockCases, mockAlerts } from "@/lib/mock-data"
 import { SeverityBadge } from "@/components/domain/status-badge"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { getCases } from "@/lib/api/cases"
+import { Case } from "@/types"
 
-export default function DashboardPage() {
-  const openCases = mockCases.filter(c => c.status !== "closed" && c.status !== "resolved")
+export const dynamic = 'force-dynamic';
+
+export default async function DashboardPage() {
+  let openCases: Case[] = []
+  let error = null
+  
+  try {
+    // Fetch a subset of cases for the dashboard
+    openCases = await getCases({ limit: 10, status: "open" })
+  } catch (e: any) {
+    error = e.message
+  }
+
   const criticalCases = openCases.filter(c => c.severity === "critical")
-  const unassignedAlerts = mockAlerts.filter(a => !a.isAssigned)
+
+  // Mocking health and alerts as they don't have endpoints mapped yet
+  const mockHealth = {
+    apiUptime: 99.99,
+    automationQueue: 0,
+    systemErrors: 2,
+  }
+  const unassignedAlertsCount = 4 // Mock for now until Alerts API is integrated
 
   return (
     <div className="space-y-6">
@@ -18,6 +37,12 @@ export default function DashboardPage() {
           Overview of your security posture and operational health.
         </p>
       </div>
+
+      {error && (
+        <div className="bg-destructive/15 text-destructive p-4 rounded-md text-sm border border-destructive/20">
+          Failed to load dashboard data: {error}. Check if NEXT_PUBLIC_DEV_TOKEN is set.
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -59,7 +84,7 @@ export default function DashboardPage() {
             <AlertTriangle className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{unassignedAlerts.length}</div>
+            <div className="text-2xl font-bold">{unassignedAlertsCount}</div>
             <p className="text-xs text-muted-foreground">Waiting for correlation</p>
           </CardContent>
         </Card>
@@ -72,14 +97,14 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {openCases.length === 0 ? (
+              {openCases.length === 0 && !error ? (
                 <div className="text-sm text-muted-foreground">No active cases.</div>
               ) : (
                 openCases.slice(0, 5).map(c => (
                   <div key={c.id} className="flex items-center justify-between">
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">{c.title}</p>
-                      <p className="text-xs text-muted-foreground">{c.id} • Assigned to: {c.assignee?.name || "Unassigned"}</p>
+                      <p className="text-xs text-muted-foreground">{c.id.split('-')[0]}... • Assigned to: {c.assigned_to || "Unassigned"}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <SeverityBadge severity={c.severity} />

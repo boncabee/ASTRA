@@ -1,21 +1,32 @@
-import { mockCases, mockTimelineEvents } from "@/lib/mock-data"
 import { notFound } from "next/navigation"
 import { SeverityBadge, StatusBadge } from "@/components/domain/status-badge"
 import { CaseTimeline } from "@/components/domain/case-timeline"
 import { CaseActions } from "@/components/domain/case-actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
+import { getCaseById, getCaseTimeline } from "@/lib/api/cases"
 
-export default function CaseDetailPage({ params }: { params: { id: string } }) {
+export const dynamic = 'force-dynamic';
+
+export default async function CaseDetailPage({ params }: { params: { id: string } }) {
   const caseId = params.id
-  const caseData = mockCases.find(c => c.id === caseId)
-
-  if (!caseData) {
-    notFound()
+  
+  let caseData
+  let events = []
+  
+  try {
+    const [fetchedCase, fetchedEvents] = await Promise.all([
+      getCaseById(caseId),
+      getCaseTimeline(caseId)
+    ])
+    caseData = fetchedCase
+    events = fetchedEvents
+  } catch (error: any) {
+    if (error.message.includes("404")) {
+      notFound()
+    }
+    throw error // Let the error boundary catch it
   }
-
-  const events = mockTimelineEvents.filter(e => e.caseId === caseId)
 
   return (
     <div className="space-y-6">
@@ -27,7 +38,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
             <StatusBadge status={caseData.status} />
           </div>
           <p className="text-muted-foreground">
-            {caseData.id} • Assigned to {caseData.assignee?.name || "Unassigned"} • Created {new Date(caseData.createdAt).toLocaleString()}
+            {caseData.id} • Assigned to {caseData.assigned_to || "Unassigned"} • Created {new Date(caseData.created_at).toLocaleString()}
           </p>
         </div>
         <div className="flex gap-2">
@@ -47,7 +58,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
               <CardTitle>Description</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm">{caseData.description}</p>
+              <p className="text-sm">{caseData.description || "No description provided."}</p>
             </CardContent>
           </Card>
 

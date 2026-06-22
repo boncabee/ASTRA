@@ -1,5 +1,5 @@
 export type Severity = "critical" | "high" | "medium" | "low"
-
+export type Priority = "critical" | "high" | "medium" | "low"
 export type CaseStatus = "open" | "in_progress" | "resolved" | "closed"
 
 export interface User {
@@ -12,25 +12,23 @@ export interface User {
 export interface Case {
   id: string
   title: string
-  description: string
+  description: string | null
   severity: Severity
+  priority: Priority
   status: CaseStatus
-  assignee: User | null
-  createdAt: string
-  updatedAt: string
+  assigned_to: string | null
+  created_by: string
+  created_at: string
+  updated_at: string
 }
-
-export type TimelineEventType = "alert" | "observation" | "system" | "user"
 
 export interface TimelineEvent {
   id: string
-  caseId: string
-  type: TimelineEventType
-  title: string
-  description: string
-  timestamp: string
-  actor?: User | "System"
-  metadata?: Record<string, any>
+  case_id: string
+  event_type: string
+  actor: string
+  event_metadata: Record<string, any> | null
+  created_at: string
 }
 
 export interface Alert {
