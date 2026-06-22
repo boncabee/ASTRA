@@ -7,14 +7,11 @@
 ## 1. Project Overview
 ASTRA is an enterprise-grade, high-throughput security event processing and automation platform. It acts as the deterministic nervous system for a Security Operations Center (SOC), standardizing disparate telemetry, correlating threats, enforcing strict policies, and executing automated responses at scale.
 
-## 2. Vision
-Our vision is to empower security teams with a platform that guarantees deterministic automated responses backed by immutable evidence, significantly reducing Mean Time to Respond (MTTR) while eliminating raw log fatigue.
+## 2. Production Status
+**Current Status: Production Launch Authorized**
+ASTRA has completed its pilot phase and is fully authorized for production workloads. The platform meets stringent CI/CD quality gates, strict security controls, and high-availability operational requirements.
 
-## 3. Product Purpose
-Modern SOCs are overwhelmed by fragmented security alerts and rigid SIEMs that require massive manual effort to triage and respond. ASTRA standardizes ingestion, eliminates noise through correlation, and bridges the gap between detection and automated response.
-*Read more in the [Product Requirements Document (PRD)](docs/product/PRD.md).*
-
-## 4. Key Capabilities
+## 3. Key Features
 - **Universal Event Parsing:** High-speed ingestion mapping raw logs to a Common Event Schema (CES).
 - **Observation Engine:** Dynamic threat correlation and risk scoring.
 - **Policy Engine:** Deterministic rule evaluation triggering defined actions.
@@ -22,99 +19,73 @@ Modern SOCs are overwhelmed by fragmented security alerts and rigid SIEMs that r
 - **Automation Foundation:** Asynchronous, non-blocking queue execution for external system integrations.
 - **Case Management:** Structured orchestration of observations and evidence for human-in-the-loop review.
 
-## 5. Architecture Overview
-ASTRA follows a modular monolith architecture driven by Domain-Driven Design (DDD):
+## 4. Architecture Summary
+ASTRA follows a modular monolith architecture driven by Domain-Driven Design (DDD). The data flows deterministically:
 1. **Ingestion:** API receives data -> `Parser` converts to `CESEvent`.
 2. **Correlation:** `Observation Engine` groups events -> updates Risk Score.
 3. **Decision:** `Policy Engine` evaluates Observation -> creates `PolicyDecision` & saves `Evidence`.
 4. **Action:** `Automation Engine` queues task -> Background Worker executes response.
-*Explore the architecture in [System Design Document (SDD)](docs/architecture/CASE_FOUNDATION_IMPLEMENTATION.md) and [Architecture Directory](docs/architecture/).*
+
+For a deep dive, see the [Architecture Overview](docs/architecture/ARCHITECTURE_OVERVIEW.md).
+
+## 5. Deployment Model
+**Enterprise-Grade Self-Hosted**
+ASTRA is designed exclusively for self-hosted deployment on enterprise infrastructure. It utilizes a hardened Docker Compose stack containing the application, database, and observability layers. Note: A multi-tenant SaaS evolution has been intentionally deferred to focus entirely on self-hosted data sovereignty and isolation. 
+For more details, see the [Deployment Overview](docs/operations/DEPLOYMENT_OVERVIEW.md).
 
 ## 6. Technology Stack
 - **Backend:** Python 3.10+, FastAPI, Pydantic V2
 - **Database:** PostgreSQL (asyncpg), SQLAlchemy 2.0 ORM, Alembic
 - **Testing:** Pytest (100% Coverage Enforced)
-- **Environment:** Docker, WSL2, Windows local dev
+- **Deployment:** Docker, NGINX
 
-## 7. Repository Structure
-```
-ASTRA/
-├── backend/            # Core Python API and services
-├── docs/               # Official Documentation
-│   ├── archive/        # Deprecated and historical validation records
-│   ├── architecture/   # Design, ADRs, and Domain Models
-│   ├── development/    # Contributing guides and strategies
-│   ├── history/        # Sprint completion and phase reports
-│   ├── operations/     # Runbooks and environment setup guides
-│   ├── product/        # PRDs, roadmaps, and requirements
-│   └── standards/      # Global coding and security standards
-├── frontend/           # Future UI dashboard
-└── README.md           # This file
-```
+## 7. Security Features
+Security is foundational to ASTRA:
+- **Zero-Trust Defaults:** All routes require authentication by default.
+- **TLS & Encryption:** Mandatory TLS 1.3 termination via NGINX with HSTS.
+- **Immutable Evidence:** Cryptographic auditing of automated decisions.
+- **Rate Limiting:** Global IP-based rate limiting to prevent abuse.
+- **Container Hardening:** Non-root execution and minimal surface area images.
 
-## 8. Quick Start
+## 8. Monitoring Stack
+ASTRA ships with an embedded observability stack:
+- **Metrics:** Prometheus endpoints embedded in all services.
+- **Dashboards:** Grafana visualizing the RED (Rate, Errors, Duration) metrics.
+- **Alerting:** Alertmanager routing critical failures to Slack/PagerDuty.
+For detailed runbooks, see the [Monitoring Overview](docs/operations/MONITORING_OVERVIEW.md).
+
+## 9. Backup & Recovery
+Automated daily PostgreSQL logical backups (SQL dump + gzip) are configured on the host. Offsite synchronization and tested disaster recovery drills ensure strict Recovery Point Objectives (RPO) and Recovery Time Objectives (RTO).
+See the [Backup & Recovery Overview](docs/operations/BACKUP_RECOVERY_OVERVIEW.md).
+
+## 10. CI/CD Pipeline
+Continuous Integration is enforced via GitHub Actions. Merges to `main` and production releases require:
+- 100% Pytest Coverage
+- Zero MyPy type-checking errors
+- Zero Ruff lint violations
+- Zero Bandit security vulnerabilities
+- Passing `pip-audit` for supply chain security
+- Automated SBOM (Software Bill of Materials) generation
+
+For release procedures, see the [Release Process Overview](docs/operations/RELEASE_PROCESS_OVERVIEW.md).
+
+## 11. Quick Start
 ### Prerequisites
-- Docker & Docker Desktop with WSL2 integration
-- Python 3.10+
+- Docker & Docker Desktop with WSL2 integration (Windows) or native Linux/macOS.
+- Python 3.10+ (for local development)
 
 ### Run via Docker
 ```bash
 git clone https://github.com/boncabee/ASTRA.git
 cd ASTRA
-docker-compose up -d db
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
-## 9. Local Development Setup
-To ensure environment consistency, please follow the canonical [Local Development Setup Guide](docs/operations/LOCAL_DEVELOPMENT_SETUP.md).
+## 12. Documentation Index
+The central documentation map is located at [docs/README.md](docs/README.md).
 
-```bash
-cd backend/
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-alembic upgrade head
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
+## 13. Roadmap
+Having achieved Production Launch Authorization, future roadmap items focus on horizontal scalability, advanced SIEM integrations, and the development of the frontend React dashboard. See [Roadmap](docs/product/ROADMAP.md) for specifics.
 
-## 10. Testing Workflow
-All testing is mandated to run from the `backend/` directory utilizing the `astra_test` database.
-For complete instructions, refer to the [Testing Guide](docs/operations/TESTING_GUIDE.md).
-```bash
-cd backend/
-pytest
-```
-
-## 11. Documentation Index
-The central documentation hub is located at [docs/README.md](docs/README.md).
-Key links:
-- [Product & Roadmap](docs/product/)
-- [Architecture](docs/architecture/)
-- [Task Breakdown](docs/product/WORK_BREAKDOWN_STRUCTURE.md)
-- [Operations Docs](docs/operations/)
-- [Global Standards](docs/standards/)
-
-## 12. Development Standards
-All development must align with our [Global Development Standards](docs/standards/DEVELOPMENT_STANDARD_GLOBAL.md) and [Coding Standards](docs/standards/CODING_STANDARDS.md).
-
-## 13. Branch Strategy
-ASTRA utilizes trunk-based development with short-lived feature branches. All branches must pass the CI/CD pipeline quality gates before merging into `main`.
-
-## 14. CI/CD Overview
-Continuous Integration is enforced via GitHub Actions. Merges to `main` require:
-- 100% Pytest Coverage
-- Zero MyPy type-checking errors
-- Zero Bandit security vulnerabilities
-- Passing `pip-audit`
-
-## 15. Security Notes
-ASTRA is a security product; as such, security is baked into the SDLC. Please refer to our [Security Standards](docs/standards/DEVSECOPS_STANDARD.md) and the [Troubleshooting Guide](docs/operations/TROUBLESHOOTING_GUIDE.md) for connectivity or credential issues.
-
-## 16. Roadmap Overview
-Phase 8 focuses on Production Readiness and enterprise hardening. Check the [Roadmap](docs/product/ROADMAP.md) for future capabilities including UI integrations and advanced correlations.
-
-## 17. Contribution Guide
-Please review our [Contributing Guidelines](docs/development/CONTRIBUTING.md) and [Documentation Governance Standard](docs/standards/DOCUMENTATION_LIFECYCLE_STANDARD.md) prior to submitting pull requests.
-
-## 18. License
+## 14. License
 ASTRA is released under the [MIT License](LICENSE).

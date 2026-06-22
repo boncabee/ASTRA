@@ -1,6 +1,15 @@
-# ASTRA Documentation Index
+# ASTRA Documentation Map
 
-Welcome to the ASTRA documentation repository. This directory serves as the master index for all project-related knowledge.
+Welcome to the ASTRA documentation repository. This directory serves as the master index and single source of truth for all project-related knowledge.
+
+## Core Overviews
+Start here to understand the fundamental mechanics of the ASTRA platform.
+- [Architecture Overview](./architecture/ARCHITECTURE_OVERVIEW.md)
+- [Deployment Overview](./operations/DEPLOYMENT_OVERVIEW.md)
+- [Operations Overview](./operations/OPERATIONS_OVERVIEW.md)
+- [Monitoring Overview](./operations/MONITORING_OVERVIEW.md)
+- [Backup & Recovery Overview](./operations/BACKUP_RECOVERY_OVERVIEW.md)
+- [Release Process Overview](./operations/RELEASE_PROCESS_OVERVIEW.md)
 
 ## [Product (`/product`)](./product/)
 Contains all business requirements, user journeys, roadmaps, and product specifications.
@@ -10,7 +19,7 @@ Contains all business requirements, user journeys, roadmaps, and product specifi
 - [Roadmap](./product/ROADMAP.md)
 
 ## [Architecture (`/architecture`)](./architecture/)
-Contains system design documents, Domain-Driven Design models, and Architecture Decision Records (ADRs).
+Contains detailed system design documents, Domain-Driven Design models, and Architecture Decision Records (ADRs).
 - [Architecture Decision Records (ADR)](./architecture/ADR/)
 - [Domain Models](./architecture/DOMAIN_MODELS/)
 - [Case Foundation Implementation](./architecture/CASE_FOUNDATION_IMPLEMENTATION.md)
@@ -22,7 +31,7 @@ Contains guides and strategies for contributing to the ASTRA codebase.
 - [Release Process](./development/RELEASE_PROCESS.md)
 
 ## [Operations (`/operations`)](./operations/)
-Contains canonical guides for local setup, testing, and troubleshooting.
+Contains canonical runbooks, local setup guides, testing instructions, and troubleshooting steps for operators and developers.
 - [Local Development Setup](./operations/LOCAL_DEVELOPMENT_SETUP.md)
 - [Testing Guide](./operations/TESTING_GUIDE.md)
 - [PostgreSQL Development Guide](./operations/POSTGRESQL_DEVELOPMENT_GUIDE.md)
@@ -41,7 +50,7 @@ Contains the historical record of sprint completions, phase reports, and strateg
 - [Implementation History](./history/IMPLEMENTATION_HISTORY.md)
 
 ## [Archive (`/archive`)](./archive/)
-Contains deprecated or temporary artifacts such as past validation matrices, raw audit reports, and debugging logs. Kept strictly for historical reference.
+Contains deprecated or temporary artifacts such as past validation matrices, raw audit reports, obsolete readiness assessments, and debugging logs. Kept strictly for historical reference.
 - [Audits](./archive/audits/)
 - [Validation Matrices](./archive/validation/)
 - [Sprint Reports](./archive/sprint-reports/)
