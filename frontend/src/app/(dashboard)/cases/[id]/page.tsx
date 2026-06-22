@@ -2,6 +2,7 @@ import { mockCases, mockTimelineEvents } from "@/lib/mock-data"
 import { notFound } from "next/navigation"
 import { SeverityBadge, StatusBadge } from "@/components/domain/status-badge"
 import { CaseTimeline } from "@/components/domain/case-timeline"
+import { CaseActions } from "@/components/domain/case-actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -65,12 +66,8 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start">Run Playbook</Button>
-              <Button variant="outline" className="w-full justify-start">Block IP (Firewall)</Button>
-              <Button variant="outline" className="w-full justify-start">Lock User Account</Button>
-              <Separator className="my-4" />
-              <Button variant="secondary" className="w-full justify-start">Escalate to Tier 2</Button>
+            <CardContent>
+              <CaseActions caseId={caseData.id} />
             </CardContent>
           </Card>
         </div>
