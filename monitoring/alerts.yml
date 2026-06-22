@@ -1,0 +1,48 @@
+groups:
+  - name: astra.critical
+    interval: 30s
+    rules:
+
+      # ── Backend Down ──────────────────────────────────────────────────────────
+      - alert: ASTRABackendDown
+        expr: up{job="astra-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ASTRA backend is unreachable"
+          description: >
+            Prometheus cannot scrape the ASTRA backend metrics endpoint.
+            The service may have crashed. Check container status:
+            docker compose -f docker-compose.prod.yml ps backend
+
+      # ── High 5xx Error Rate ───────────────────────────────────────────────────
+      - alert: ASTRAHigh5xxRate
+        expr: >
+          rate(http_requests_total{job="astra-backend",status=~"5.."}[5m])
+          /
+          rate(http_requests_total{job="astra-backend"}[5m])
+          > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ASTRA 5xx error rate exceeded 5%"
+          description: >
+            More than 5% of requests are returning 5xx errors over the last 5 minutes.
+            Review backend logs: docker compose -f docker-compose.prod.yml logs backend
+
+      # ── Disk Usage ────────────────────────────────────────────────────────────
+      - alert: ASTRADiskUsageHigh
+        expr: >
+          (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"})
+          / node_filesystem_size_bytes{mountpoint="/"}
+          > 0.80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host disk usage above 80%"
+          description: >
+            The root filesystem on the ASTRA host is more than 80% full.
+            Check backup volume and Docker logs. Run: df -h

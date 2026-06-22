@@ -5,14 +5,129 @@ on:
     tags:
       - 'v*'
 
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ${{ github.repository }}/astra-backend
+  FRONTEND_IMAGE: ${{ github.repository }}/astra-frontend
+
 jobs:
+  # ─────────────────────────────────────────────────────────
+  # Run CI gates first — release only after green
+  # ─────────────────────────────────────────────────────────
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  # ─────────────────────────────────────────────────────────
+  # Build, push images, generate SBOM, create GitHub Release
+  # ─────────────────────────────────────────────────────────
   build-and-release:
     runs-on: ubuntu-latest
+    needs: ci
+    permissions:
+      contents: write       # create GitHub Release
+      packages: write       # push to GHCR
+      id-token: write       # OIDC for provenance (future)
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Build Docker Images
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # ── Extract semantic version from tag (v1.2.3 → 1.2.3) ──
+    - name: Extract version
+      id: version
       run: |
-        docker build -t astra-backend ./backend
-        docker build -t astra-frontend ./frontend
-    - name: Push to Registry (Stub)
-      run: echo "Manual approval required to push"
+        TAG="${GITHUB_REF_NAME}"
+        VERSION="${TAG#v}"
+        echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+        echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        echo "Release: ${TAG} (${VERSION})"
+
+    # ── Authenticate to GHCR ─────────────────────────────────
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # ── Build + push backend image ───────────────────────────
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ steps.version.outputs.tag }}
+          ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:latest
+        labels: |
+          org.opencontainers.image.title=ASTRA Backend
+          org.opencontainers.image.version=${{ steps.version.outputs.version }}
+          org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          org.opencontainers.image.revision=${{ github.sha }}
+
+    # ── Build + push frontend image ──────────────────────────
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ steps.version.outputs.tag }}
+          ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
+        labels: |
+          org.opencontainers.image.title=ASTRA Frontend
+          org.opencontainers.image.version=${{ steps.version.outputs.version }}
+          org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          org.opencontainers.image.revision=${{ github.sha }}
+
+    # ── Install Syft and generate SBOMs (LB-006) ────────────
+    - name: Install Syft
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
+          | sh -s -- -b /usr/local/bin
+
+    - name: Generate backend SBOM (CycloneDX JSON)
+      run: |
+        syft \
+          ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ steps.version.outputs.tag }} \
+          -o cyclonedx-json \
+          --file sbom-backend-${{ steps.version.outputs.tag }}.cdx.json
+
+    - name: Generate frontend SBOM (CycloneDX JSON)
+      run: |
+        syft \
+          ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ steps.version.outputs.tag }} \
+          -o cyclonedx-json \
+          --file sbom-frontend-${{ steps.version.outputs.tag }}.cdx.json
+
+    # ── Create GitHub Release and attach SBOMs ───────────────
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: ASTRA ${{ steps.version.outputs.tag }}
+        generate_release_notes: true
+        body: |
+          ## Container Images
+
+          Pull the immutable release images from GitHub Container Registry:
+
+          ```bash
+          docker pull ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ steps.version.outputs.tag }}
+          docker pull ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ steps.version.outputs.tag }}
+          ```
+
+          ## Deployment
+
+          Update your `docker-compose.prod.yml` to reference the pinned image tags
+          instead of building from source for fully reproducible deployments.
+
+          ## Software Bill of Materials (SBOM)
+
+          CycloneDX JSON SBOMs are attached to this release for both images.
+          Use them to audit the software supply chain and respond to CVE disclosures.
+
+          **Commit:** ${{ github.sha }}
+        files: |
+          sbom-backend-${{ steps.version.outputs.tag }}.cdx.json
+          sbom-frontend-${{ steps.version.outputs.tag }}.cdx.json
