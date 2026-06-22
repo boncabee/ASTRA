@@ -29,9 +29,18 @@ async def list_observations(
     classification: Optional[str] = None,
     created_after: Optional[datetime] = None,
     created_before: Optional[datetime] = None,
+    sort_by: str = Query("created_at", description="Field to sort by (created_at, risk_score, status, classification)"),
+    sort_order: str = Query("desc", description="Sort order (asc or desc)"),
     db: AsyncSession = Depends(get_db)
 ):
     """Retrieve Observations."""
+    valid_sort_by = ["created_at", "risk_score", "status", "classification"]
+    if sort_by not in valid_sort_by:
+        return error_response(f"Invalid sort_by. Must be one of {valid_sort_by}", 400)
+    
+    if sort_order.lower() not in ["asc", "desc"]:
+        return error_response("Invalid sort_order. Must be 'asc' or 'desc'", 400)
+
     service = ObservationService(db)
     observations, total = await service.repository.list(
         skip=skip,
@@ -40,7 +49,9 @@ async def list_observations(
         risk_category=risk_category,
         classification=classification,
         created_after=created_after,
-        created_before=created_before
+        created_before=created_before,
+        sort_by=sort_by,
+        sort_order=sort_order
     )
     
     return {

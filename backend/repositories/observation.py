@@ -44,7 +44,9 @@ class ObservationRepository:
         risk_category: Optional[str] = None,
         classification: Optional[str] = None,
         created_after: Optional[datetime] = None,
-        created_before: Optional[datetime] = None
+        created_before: Optional[datetime] = None,
+        sort_by: str = "created_at",
+        sort_order: str = "desc"
     ) -> Tuple[List[Observation], int]:
         
         query = select(Observation)
@@ -79,8 +81,22 @@ class ObservationRepository:
         total_result = await self.session.execute(count_query)
         total = total_result.scalar() or 0
 
+        # Apply sorting
+        valid_sort_columns = {
+            "created_at": Observation.created_at,
+            "risk_score": Observation.risk_score,
+            "status": Observation.status,
+            "classification": Observation.classification
+        }
+        
+        sort_column = valid_sort_columns.get(sort_by, Observation.created_at)
+        if sort_order.lower() == "asc":
+            query = query.order_by(sort_column.asc())
+        else:
+            query = query.order_by(sort_column.desc())
+
         # Apply pagination
-        query = query.order_by(Observation.created_at.desc()).offset(skip).limit(limit)
+        query = query.offset(skip).limit(limit)
         result = await self.session.execute(query)
         
         return list(result.scalars().all()), total

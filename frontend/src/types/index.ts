@@ -10,6 +10,29 @@ export interface User {
   is_active?: boolean
 }
 
+export enum ObservationStatus {
+  NEW = "NEW",
+  TRIAGED = "TRIAGED",
+  ESCALATED = "ESCALATED",
+  CLOSED = "CLOSED"
+}
+
+export interface Observation {
+  id: string
+  title: string
+  description: string
+  correlation_id: string
+  classification: string
+  status: ObservationStatus
+  risk_score: number
+  policy_action?: string
+  evidence_count: number
+  created_at: string
+  updated_at: string
+  created_by?: string
+  updated_by?: string
+}
+
 export interface Case {
   id: string
   title: string

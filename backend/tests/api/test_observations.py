@@ -153,4 +153,26 @@ async def test_update_observation_status_soc_denied(override_get_db, client: Asy
         headers=soc_headers
     )
     assert response.status_code == 403
+    assert response.status_code == 403
 
+@pytest.mark.asyncio
+async def test_get_observations_sorting_valid(override_get_db, client: AsyncClient, admin_headers, mock_observation):
+    # Test ascending
+    response = await client.get("/api/v1/observations?sort_by=risk_score&sort_order=asc", headers=admin_headers)
+    assert response.status_code == 200
+    
+    # Test descending
+    response = await client.get("/api/v1/observations?sort_by=status&sort_order=desc", headers=admin_headers)
+    assert response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_get_observations_sorting_invalid_column(override_get_db, client: AsyncClient, admin_headers):
+    response = await client.get("/api/v1/observations?sort_by=invalid_column", headers=admin_headers)
+    assert response.status_code == 400
+    assert "Invalid sort_by" in response.json()["error"]
+
+@pytest.mark.asyncio
+async def test_get_observations_sorting_invalid_order(override_get_db, client: AsyncClient, admin_headers):
+    response = await client.get("/api/v1/observations?sort_by=risk_score&sort_order=invalid_order", headers=admin_headers)
+    assert response.status_code == 400
+    assert "Invalid sort_order" in response.json()["error"]
