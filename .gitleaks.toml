@@ -1,0 +1,30 @@
+# Gitleaks configuration for ASTRA
+# Allowlists documented example values in committed template files and phase reports.
+# These are intentional documentation patterns, not real secrets.
+#
+# Gitleaks v8 auto-discovers this file from the repo root.
+# No --config flag is needed in CI.
+
+title = "ASTRA Gitleaks Configuration"
+
+[allowlist]
+  description = "Allow documented example and configuration flag values"
+
+  # Files that are explicitly documentation/templates — no real secrets
+  paths = [
+    # Environment variable templates — all values are placeholders or feature flags
+    '''.env\.example''',
+    '''.env\.staging\.example''',
+    # Phase reports contain diff blocks showing config changes — not real secrets
+    '''docs/history/phase-reports/.*\.md''',
+    # Operational documentation contains env var examples
+    '''docs/operations/.*\.md''',
+    # Staging documentation
+    '''docs/.*\.md''',
+  ]
+
+  # Regexes safe across all files
+  regexes = [
+    # ENVIRONMENT is a feature flag (prod/dev/staging), not a secret
+    '''ENVIRONMENT\s*=\s*(prod|dev|staging|test)''',
+  ]
