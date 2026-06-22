@@ -10,6 +10,7 @@ Start here to understand the fundamental mechanics of the ASTRA platform.
 - [Monitoring Overview](./operations/MONITORING_OVERVIEW.md)
 - [Backup & Recovery Overview](./operations/BACKUP_RECOVERY_OVERVIEW.md)
 - [Release Process Overview](./operations/RELEASE_PROCESS_OVERVIEW.md)
+- [Operational Adoption Framework](./operations/OPERATIONAL_ADOPTION_FRAMEWORK.md)
 
 ## [Product (`/product`)](./product/)
 Contains all business requirements, user journeys, roadmaps, and product specifications.
@@ -36,6 +37,7 @@ Contains canonical runbooks, local setup guides, testing instructions, and troub
 - [Testing Guide](./operations/TESTING_GUIDE.md)
 - [PostgreSQL Development Guide](./operations/POSTGRESQL_DEVELOPMENT_GUIDE.md)
 - [Troubleshooting Guide](./operations/TROUBLESHOOTING_GUIDE.md)
+- [Incident Template](./operations/INCIDENT_TEMPLATE.md)
 
 ## [Standards (`/standards`)](./standards/)
 Contains all global governance, coding, and security standards enforced across the project.
@@ -48,6 +50,20 @@ Contains all global governance, coding, and security standards enforced across t
 Contains the historical record of sprint completions, phase reports, and strategic planning artifacts.
 - [Phase Reports](./history/phase-reports/)
 - [Implementation History](./history/IMPLEMENTATION_HISTORY.md)
+
+## [Incidents (`/incidents`)](./incidents/)
+Contains all documented operational incidents and post-mortems following the ASTRA adoption framework.
+- [Incident Reports](./incidents/)
+
+## [Metrics (`/metrics`)](./metrics/)
+Contains standardized templates and historical records of ASTRA's operational telemetry.
+- [Monthly Metrics Template](./metrics/MONTHLY_METRICS_TEMPLATE.md)
+
+## [Feedback (`/feedback`)](./feedback/)
+Contains qualitative user feedback, feature requests, and friction logs.
+- [Feature Request Template](./feedback/FEATURE_TEMPLATE.md)
+- [Friction Log Template](./feedback/FRICTION_TEMPLATE.md)
+- [Improvement Request Template](./feedback/IMPROVEMENT_TEMPLATE.md)
 
 ## [Archive (`/archive`)](./archive/)
 Contains deprecated or temporary artifacts such as past validation matrices, raw audit reports, obsolete readiness assessments, and debugging logs. Kept strictly for historical reference.
