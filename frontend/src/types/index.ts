@@ -4,9 +4,10 @@ export type CaseStatus = "open" | "in_progress" | "resolved" | "closed"
 
 export interface User {
   id: string
-  name: string
+  username: string
   email: string
-  avatarUrl?: string
+  role: string
+  is_active?: boolean
 }
 
 export interface Case {
