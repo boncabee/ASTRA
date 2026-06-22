@@ -84,18 +84,29 @@ Production deployments require a `.env` file at the repository root. Do not comm
 
 Required:
 
-```env id="tntfns"
-DOMAIN=example.com
-NEXT_PUBLIC_API_URL=https://example.com/api/v1
+```env
+DOMAIN=your-domain.com
+NEXT_PUBLIC_API_URL=https://your-domain.com/api/v1
+# Must be set to prod to activate security guards (insecure key detection)
+ENVIRONMENT=prod
+# Set to your frontend origin — prevents CORS failures for browser requests
+BACKEND_CORS_ORIGINS=["https://your-domain.com"]
 POSTGRES_USER=astra_prod
-POSTGRES_PASSWORD=secure_password
+POSTGRES_PASSWORD=<min 24 chars, high entropy>
 POSTGRES_DB=astra
-DATABASE_URL=postgresql+asyncpg://astra_prod:secure_password@db:5432/astra
-JWT_SECRET_KEY=secure_32_char_string
+DATABASE_URL=postgresql+asyncpg://astra_prod:<password>@db:5432/astra
+# Generate with: openssl rand -hex 32
+JWT_SECRET_KEY=<min 32 chars, cryptographically random>
 GEMINI_API_KEY=
 LOG_LEVEL=INFO
 PRIVACY_MODE=true
+# Email for Let's Encrypt notifications
+CERTBOT_EMAIL=admin@your-domain.com
 ```
+
+> **Warning:** All `CHANGE_ME_*` placeholders must be replaced before first boot.
+> The application will refuse to start in `ENVIRONMENT=prod` if `JWT_SECRET_KEY`
+> equals the insecure default value.
 
 ---
 

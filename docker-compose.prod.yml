@@ -57,6 +57,7 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - PRIVACY_MODE=${PRIVACY_MODE:-true}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS:-["https://example.com"]}
     depends_on:
       db:
         condition: service_healthy
@@ -88,6 +89,6 @@ networks:
 
 volumes:
   postgres_data:
-  backup_data:
   certbot_conf:
   certbot_www:
+
